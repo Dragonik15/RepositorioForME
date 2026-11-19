@@ -1,0 +1,1777 @@
+                         Universidad Autónoma del
+                             Estado de Hidalgo
+
+
+
+
+            Instituto de Ciencias Básicas e Ingenierı́a
+
+
+          Licenciatura en Fı́sica y tecnologı́a avanzada
+
+
+
+                 Programación Estructurada
+                      en Entorno Unix
+
+
+
+                  6. Apuntadores y archivos
+
+
+                          Karla I. López De La Cruz
+                    mailto: lopezdelacruz.ki@gmail.com
+
+
+
+
+Este documento contiene las notas de la unidad 4 para el curso de Programación
+Estructurada. La unidad tiene como objetivo describir y aplicar operaciones con
+                    apuntadores y archivos en lenguaje C.
+
+
+
+
+                               Octubre de 2026
+Índice general
+
+6. Apuntadores y Archivos                                                                      1
+   6.1. Operaciones con apuntadores . . . . . . . . . . . . . . . . . . . . . . . . . .        1
+   6.2. Tipos de archivos . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .   12
+   6.3. Almacenamiento de datos en archivos . . . . . . . . . . . . . . . . . . . . . .       12
+        6.3.1. Almacenamiento secuencial . . . . . . . . . . . . . . . . . . . . . . .        14
+        6.3.2. Almacenamiento directo . . . . . . . . . . . . . . . . . . . . . . . . .       15
+   6.4. Operaciones con archivos . . . . . . . . . . . . . . . . . . . . . . . . . . . . .    15
+        6.4.1. Apertura de archivos . . . . . . . . . . . . . . . . . . . . . . . . . . .     15
+        6.4.2. Lectura y escritura de archivos . . . . . . . . . . . . . . . . . . . . .      17
+
+A. Ejercicios                                                                                 33
+   A.1. Apuntadores . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .   33
+   A.2. Almacenamiento de datos en archivos . . . . . . . . . . . . . . . . . . . . . .       33
+   A.3. Operaciones con archivos . . . . . . . . . . . . . . . . . . . . . . . . . . . . .    35
+
+
+
+
+                                               I
+II   ÍNDICE GENERAL
+6
+
+Apuntadores y Archivos
+
+6.1.      Operaciones con apuntadores
+    Un apuntador es una variable que contiene una dirección de memoria. Normalmente, esa
+dirección es la posición de otra variable que contiene un dato. Si una variable contiene la
+dirección de otra variable, entonces se dice que la primera variable apunta a la segunda. El
+apuntador apunta al espacio fı́sico donde está el dato o la variable. Un apuntador puede
+apuntar a un objeto de cualquier tipo incluyendo estructuras, funciones, etc.
+
+Un nombre de variable se refiere directamente a un valor y un apuntador se refiere indirecta-
+mente a un valor. El referirse a un valor a través de un apuntador se conoce como indirección.
+
+Si una variable en la posición 1004 está apuntada por otra variable situada en la posición
+1000, la posición 1000 contendrá el valor 1004 como se muestra en la figura 6.1
+    Los punteros permiten a las funciones modificar sus argumentos de llamada, se utilizan
+para soportar las rutinas de asignación dinámica de C, mejoran la eficiencia de ciertas rutinas
+y se pueden utilizar para crear y manipular estructuras de datos.
+
+Si una variable va a contener un apuntador, entonces tiene que declararse como apunta-
+dor. Una declaración de apuntador consiste de un tipo base, un asterisco ( * ) y el nombre
+de la variable. La forma general de declaración de una variable apuntador es la siguiente
+
+tipo *nombre;
+
+    Donde tipo es cualquier tipo válido de C, el tipo base del apuntador, y nombre es el
+nombre de la variable apuntador. El tipo base del apuntador define el tipo de variables a
+las que puede apuntar. Cualquier tipo de apuntador puede apuntar a cualquier lugar de la
+memoria, pero C asume que a lo que apunta un apuntador es un objeto de su tipo base.
+Además, la aritmética de apuntadores está hecha en relación a su tipo base.
+
+Existen dos operadores especiales de punteros: & y *.
+
+& es un operador unario que devuelve la dirección de memoria de su operando. Por ejemplo,
+observe la siguiente instrucción
+
+                                               1
+    2                                                             6.1. Operaciones con apuntadores
+
+
+
+
+                                     Figura 6.1: Variable apuntador
+
+
+1   m=&cuenta;
+
+       Almacena en m la dirección de memoria de la variable cuenta. La dirección no tiene nada
+    que ver con el valor de cuenta. Si la variable cuenta utiliza la posición de memoria 2000 para
+    guardar su valor y tiene el valor 100, entonces, después de la asignación, m tiene el valor 2000.
+
+    * es un operador unario que devuelve el valor de la variable localizada en la dirección a
+    la que se apunta. Por ejemplo, observe la siguiente instrucción
+
+1   q=*m;
+
+        Si m contiene la dirección de memoria de cuenta, la instrucción almacena el valor de
+    cuenta en q. q tendrá el valor 100, porque 100 está almacenado en la posición 2000, que es
+    la dirección de memoria que se guardó en m.
+
+    Observe el siguiente programa
+
+1   #include <stdio.h>
+2   int main(){
+3      int cuenta,q=0;
+4      int *m;
+5      cuenta=100;
+6      m=&cuenta;
+7      q=*m;
+8      printf("\n\n\nVariable int cuenta\n");
+     6. Apuntadores y Archivos                                                                   3
+
+
+9        printf("\nContenido: %d", cuenta);
+10       printf("\nDirección: %X",&cuenta);
+11       printf("\n\n\nVariable apuntador a int m, apunta a cuenta\n");
+12       printf("\nContenido: %X",m);
+13       printf("\nDirección: %X",&m);
+14       printf("\nContenido de la variable a la que apunta: %d",*m);
+15       printf("\n\n\nVariable int q\n");
+16       printf("\nContenido: %d", q);
+17       printf("\nDirección: %X",&q);
+18       return 0;
+19   }
+
+        El programa muestra los valores de las direcciones y contenidos de las variables int cuenta
+     y q, y de la variable apuntador m, ası́ como el valor almacenado en la dirección contenida
+     en m.
+
+     Las variables apuntador deben apuntar siempre al tipo de dato correcto, por ejemplo, cuan-
+     do se declara un apuntador a un tipo int, el compilador asume que cualquier dirección que
+     contenga apunta a una variable entera.
+
+     Un apuntador puede utilizarse a la derecha de una declaración de asignación para asignar su
+     valor a otro apuntador. Por ejemplo, observe el siguiente programa
+
+1    #include <stdio.h>
+2    main(){
+3       int x=100;
+4       int *a1,*a2;
+5       a1=&x;
+6       a2=a1;
+7       printf("\n\n\nVariable int x\n");
+8       printf("\nContenido: %d", x);
+9       printf("\nDirección: %X",&x);
+10      printf("\n\n\nVariable apuntador a int a1, apunta a x\n");
+11      printf("\nContenido: %X",a1);
+12      printf("\nDirección: %X",&a1);
+13      printf("\nContenido de la variable a la que apunta: %d",*a1);
+14      printf("\n\n\nVariable apuntador a int a2, igualada a a1\n");
+15      printf("\nContenido: %X",a2);
+16      printf("\nDirección: %X",&a2);
+17      printf("\nContenido de la variable a la que apunta: %d",*a2);
+18      return 0;
+19   }
+
+        Se pueden realizar dos operaciones aritméticas con apuntadores, la suma y la resta. Por
+     ejemplo, sea un apuntador a entero a1 con valor actual de 2000, asumiendo que los enteros
+     son de 2 bytes de longitud. Observe la siguiente instrucción
+     4                                                          6.1. Operaciones con apuntadores
+
+
+     a1++;
+
+         Incrementa a a1, por lo tanto, a1 contiene ahora 2002. Cada vez que se incrementa a1
+     apunta al siguiente entero. Lo mismo ocurre al decrementar. Por ejemplo, observe la siguiente
+     instrucción
+
+     a1--;
+
+         Harı́a que a1 tenga el valor 1998.
+
+     Cada vez que se incrementa un apuntador apunta a la posición de memoria del siguiente
+     elemento de su tipo base. Cada vez que se decrementa, apunta a la posición del elemento
+     anterior. Los apuntadores aumentan o disminuyen en la longitud del tipo de dato al que
+     apuntan. Por ejemplo, suponiendo caracteres d e1 byte y enteros de 2 bytes, cuando se in-
+     crementa un puntero a caracter, su valor aumenta en 1, cuando se incrementa un puntero a
+     entero, su valor aumenta en 2. Por ejemplo, observe el siguiente programa
+
+1    #include <stdio.h>
+2    main(){
+3       int i,a[]={10,20,30,40};
+4       int *ap=a;
+5       printf("Tama~
+                    no de un dato int: %d\n",sizeof(int));
+6       printf("Valor en variable apuntador a int: %d\n\n",ap);
+7       for(i=0;i<4;i++){
+8          printf("\nValor en variable apuntador: %d\n",ap);
+9          printf("Valor apuntado: %d\n",*ap);
+10         ap++;
+11      }
+12      return 0;
+13   }
+
+         Se pueden sumar y restar enteros de y a punteros. Por ejemplo, observe la siguiente
+     instrucción
+
+1    a1=a1+9;
+
+        Hace que a1 apunte al noveno elemento del tipo a1 que está más allá del elemento al cual
+     apunta actualmente.
+
+     Se puede restar un puntero de otro, esto es útil cuando ambos apuntan a un objeto co-
+     mún, como un arreglo, entonces la resta produce el número de elementos del tipo base que
+     separa a los dos valores de puntero.
+
+     Se puede comparar dos punteros en una expresión relacional. Por ejemplo, observe el si-
+     guiente fragmento de código
+     6. Apuntadores y Archivos                                                                    5
+
+
+1    int *a1,*a2;
+2    if(a1<a2){
+3    printf("a1 apunta a una posición de memoria menor que a2");
+4      }
+
+         Existe una estrecha relación entre los apuntadores y los arreglos. Por ejemplo, observe el
+     siguiente fragmento de código
+
+1    char cad[80],*ac;
+2    ac=cad;
+
+        ac ha sido asignado a la dirección del primer elemento del arreglo cad. Para acceder al
+     quinto elemento de cad se escribe
+
+     cad[4]
+
+        o
+
+     *(pl+4)
+
+        Ambas sentencias devuelven el quinto elemento de. Se suma 4 al apuntador ac para ac-
+     ceder al quinto elemento, porque ac actualmente apunta al primer elemento de cad.
+
+     El nombre del arreglo puede ser tratado como un apuntador y utilizado en aritmética de
+     apuntadores, por ejemplo la siguiente expresión
+
+     *(cad+4)
+
+        Se refiere también al quinto elemento del arreglo cad
+
+     C proporciona dos métodos para acceder a los elementos de un arreglo. La aritmética de
+     apuntadores puede ser más rápida que la indexación de arreglos. Por ejemplo, observe los
+     siguientes programas
+
+1    #include <stdio.h>
+2    void desp1(char *c);
+3    void desp2(char *c);
+4
+
+5    int main(){
+6       char cad[80];
+7       printf("Ingrese una cadena: ");
+8       gets(cad);
+9       desp1(cad);
+10      desp2(cad);
+11      return 0;
+12   }
+13
+
+14   void desp1(char *c){
+     6                                                           6.1. Operaciones con apuntadores
+
+
+15       int i;
+16       printf("Indexando como arreglo\n\n");
+17       for(i=0;c[i];++i){
+18          putchar(c[i]);
+19       }
+20   }
+21
+
+22   void desp2(char *c){
+23      printf("\n\nAccediendo con apuntador\n\n");
+24      while(*c){
+25         putchar(*c++);
+26      }
+27   }
+
+         La función desp1() indexa un arreglo y la función desp2() accede al arreglo con punteros.
+
+ 1   #include <stdio.h>
+ 2   int main(){
+ 3       int i,d,a[]={10,20,30,40};
+ 4       int *ap=a;
+ 5       printf("\nAcceso a arreglo con ı́ndices\n");
+ 6       for(i=0;i<4;i++){
+ 7          printf("a[%d] = %d\n",i,a[i]);
+ 8       }
+ 9       printf("\nAcceso a arreglo con desplazamiento de apuntador (nombre de
+      ,→  arreglo)\n");
+10       for(i=0;i<4;i++){
+11          printf("*(a + %d) = %d\n",i,*(a+i));
+12       }
+13       printf("\nAcceso a arreglo con apuntador e ı́ndices\n");
+14       for(i=0;i<4;i++){
+15          printf("ap[%d] = %d\n",i,ap[i]);
+16       }
+17       printf("\nAcceso a arreglo con desplazamiento de apuntador \n");
+18       for(i=0;i<4;i++){
+19          printf("*(ap + %d) = %d\n",i,*(ap+i));
+20       }
+21       return 0;
+22   }
+
+        El programa utiliza cuatro formas para referirse a los elementos de un arreglo para des-
+     plegar los cuatro elementos del arreglo a.
+
+     Si se va a acceder a un arreglo sólo de forma ascendente o descendente, los punteros son
+     más rápidos y más fáciles de usar. Si se va a acceder a un arreglo de forma aleatoria, la
+     indexación puede ser tan adecuada como la aritmética de apuntadores.
+     6. Apuntadores y Archivos                                                                    7
+
+
+     Las operaciones con cadenas en C se realizan normalmente con apuntadores porque se tien-
+     de a acceder a las cadenas sólo de forma secuencial. Por ejemplo, observe los siguientes
+     programas
+
+1    #include <stdio.h>
+2    int comp(char *c1, char *c2);
+3    int main(){
+4       char cad1[80], cad2[80];
+5       int d;
+6       printf("Ingrese cadena 1: ");
+7       gets(cad1);
+8       printf("Ingrese cadena 2: ");
+9       gets(cad2);
+10      d=comp(cad1,cad2);
+11      printf("Diferencia = %d",d);
+12      return 0;
+13   }
+14
+
+15   int comp(char *c1, char *c2){
+16      while(*c1){
+17         if(*c1-*c2){
+18            return *c1-*c2;
+19         }
+20         else{
+21            c1++;
+22            c2++;
+23         }
+24      }
+25      return 0;
+26   }
+
+        En C todas las cadenas terminan en nulo, ası́ la siguiente sentencia
+
+1    while(*c1)
+
+         Es cierta mientras que no se llegue al final de la cadena. La función comp() devuelve 0 si
+     c1 es igual a c2, devuelve menor que 0 si c1 es menor que c2; de otro modo devuelve mayor
+     que 0.
+
+1    #include <stdio.h>
+2    #include <string.h>
+3    int main(){
+4       char *c1, cad[80];
+5       do {
+6          c1=cad;
+7          printf("\n\nIngrese una cadena: ");
+8          gets(cad);
+     8                                                           6.1. Operaciones con apuntadores
+
+
+ 9          while(*c1){
+10             printf("\n%c: %d", *c1,*c1);
+11             c1++;
+12          }
+13       }while(strcmp(cad,"fin"));
+14       return 0;
+15   }
+
+        El programa imprime el equivalente decimal de cada caracter de una cadena. Los apun-
+     tadores pueden estructurase en arreglos como cualquier otro tipo de dato. La declaración
+     para un arreglo de apuntadores a int de tamaño 10 es la siguiente
+
+ 1   int *x[10];
+
+        Para asignar la dirección de una variable entera llamada var al tercer elemento del arreglo
+     de apuntadores, se utiliza la siguiente asignación
+
+ 1   x[2]=&var;
+
+         para encontrar el valor almacenado en var, se utiliza la siguiente instrucción
+
+ 1   *x[2]
+
+         Si se quiere pasar un arreglo de apuntadores a una función, se puede utilizar el mismo
+     método que se utiliza para otros arreglos, se llama a la función con el nombre del arreglo sin
+     ı́ndices. Por ejemplo, observe el siguiente programa
+
+ 1   #include <stdio.h>
+ 2   #include <string.h>
+ 3   void desp(int *q[]);
+ 4
+
+ 5   main(){
+ 6      int *c1[10], arr[10];
+ 7      int i;
+ 8      for(i=0;i<10;i++){
+ 9         arr[i]=i*3;
+10         c1[i]=&arr[i];
+11      }
+12      desp(c1);
+13      return 0;
+14   }
+15
+
+16   void desp(int *q[]){
+17      int i;
+18      printf("Desplegando contenido de arreglo con apuntadores\n");
+19      for (i=0;i<10;i++){
+20         printf("\n%d",*q[i]);
+21      }
+22   }
+    6. Apuntadores y Archivos                                                                   9
+
+
+       q es un apuntador a un arreglo de apuntadores a enteros. Por tanto, hay que declarar el
+    parámetro q como un arreglo de apuntadores a enteros.
+
+    Un arreglo de apuntadores es lo mismo que apuntadores a apuntadores. Un apuntador a
+    apuntador es una forma de indirección múltiple o encadenamiento de apuntadores como lo
+    muestra la figura 6.2
+
+
+
+
+                              Figura 6.2: Indirección simple y múltiple
+
+
+       En el caso de un apuntador normal, el valor del apuntador es la dirección de la variable
+    que contiene el valor deseado. En el caso de un apuntador a apuntador, el primer apuntador
+    contiene la dirección del segundo apuntador, que apunta a la variable que contiene el valor
+    deseado.
+
+    Una variable que es un apuntador a apuntador tiene que declararse como tal. Esto se hace
+    colocando un asterisco adicional delante del nombre de la variable. Por ejemplo, observe la
+    siguiente declaración
+
+1   float **an;
+
+       la declaración indica al compilador que an es un apuntador a apuntador de tipo float.
+
+    Para acceder al valor de destino indirectamente apuntado por un apuntador a apuntador
+    hay que poner dos veces el operador asterisco. Por ejemplo, observe el siguiente programa
+
+1   #include <stdio.h>
+2   int main(){
+3      int x,*p,**q;
+4      x=10;
+5      p=&x;
+6      q=&p;
+7      printf("\n\n\nVariable int x\n");
+     10                                                            6.1. Operaciones con apuntadores
+
+
+ 8        printf("\nContenido: %d", x);
+ 9        printf("\nDirección: %X",&x);
+10        printf("\n\n\nVariable apuntador a int p, apunta a x\n");
+11        printf("\nContenido: %X",p);
+12        printf("\nDirección: %X",&p);
+13        printf("\nContenido de la variable a la que apunta: %d",*p);
+14        printf("\n\n\nVariable apuntador a apuntador int q, apunta a p\n");
+15        printf("\nContenido: %X",q);
+16        printf("\nDirección: %X",&q);
+17        printf("\nContenido de la variable a la que apunta: %x",**q);
+18        return 0;
+19   }
+
+        p se declara como un apuntador a entero y q como un apuntador a apuntador a entero.
+     El programa imprime las direcciones, contenidos y valores a los que apuntan p y q.
+
+     Aunque una función no es una variable, tiene una posición fı́sica en memoria que puede
+     asignarse a un apuntador la dirección de la función es el puno de entrada a la función. Por
+     ello se puede un apuntador a una función para llamar a al función, ası́ el apuntador a función
+     contendrá la dirección de la función en memoria.
+
+     Un uso común de los apuntadores a función ocurre en los sistemas manejados por menú.
+     Al usuario se le pide seleccionar una opción de un menú. Cada opción invoca a una función
+     diferente. En un arreglo de apuntadores a función se almacenan apuntadores a cada función.
+     La selección del usuario se utiliza en el arreglo como un subı́ndice y el apuntador en el arreglo
+     se utiliza para llamar la función. Por ejemplo, observe el siguiente programa
+
+ 1   #include <stdio.h>
+ 2   #include <stdlib.h>
+ 3   void intro(void);
+ 4   void eliminar(void);
+ 5   void reportar(void);
+ 6   void salir(void);
+ 7   int menu(void);
+ 8   void (*op[4])(void)={intro,eliminar,reportar,salir};
+ 9
+
+10   int main(){
+11      int i;
+12      while(i>=0){
+13         i=menu();
+14         (*op[i])();
+15      }
+16      return 0;
+17   }
+18
+
+19   int menu (void){
+20      int o;
+     6. Apuntadores y Archivos                                                                 11
+
+
+21       do{
+22          printf("\n\nMENU\n\n");
+23          printf("1. Ingresar\n");
+24          printf("2. Eliminar\n");
+25          printf("3. Reportes\n");
+26          printf("4. Salir\n");
+27          printf("\nSu opcion... ");
+28          scanf("%d",&o);
+29       }while(o<1 || o>4);
+30       return o-1;
+31   }
+32
+
+33   void intro(void){
+34      printf("\nHa elegido 1, funcion intro( ) ha sido llamada");
+35   }
+36
+
+37   void eliminar(void){
+38      printf("\nHa elegido 2, funcion eliminar( ) ha sido llamada");
+39   }
+40
+
+41   void reportar(void){
+42      printf("\nHa elegido 3, funcion reportar( ) ha sido llamada");
+43   }
+44
+
+45   void salir(void){
+46      printf("\nHa elegido 4, funcion salir( ) ha sido llamada");
+47      printf("\nPresione una tecla para salir..");
+48      getchar();
+49      exit(0);
+50   }
+
+        Se han definido cuatro funciones, intro(),eliminar(), reportar() y salir(), donde cada una
+     de ellas no tiene argumentos y no regresa nada. Los apuntadores a estas funciones se alma-
+     cenan en un arreglo que se declara de la siguiente forma
+
+1    void (*op[4])(void)={intro,eliminar,reportar,salir};
+
+         la declaración se lee empezando en el conjunto de paréntesis de la izquierda, op es un
+     arreglo de 4 apuntadores a las funciones con argumentos void y regresan void. El arreglo se
+     inicializa con los nombres de las 4 funciones. Cuando el usuario ingresa un valor entre 1 y
+     4, el valor se decrementa en 1 y se utiliza como subı́ndice en el arreglo de apuntadores a
+     funciones. La llamada a función se efectúa con la siguiente instrucción
+
+1    (*op[i])();
+
+        En la llamada, op[i] selecciona el apuntador en la posición i del arreglo. El apuntador
+     es desreferenciado para llamar la función. Cada función imprime la opción indicada y su
+     nombre de función para indicar que ha sido llamada correctamente.
+12                                                                       6.2. Tipos de archivos
+
+
+6.2.      Tipos de archivos
+    Existen dos tipos de flujos: de texto y binarios. Un flujo de texto es una sucesión de
+caracteres. En un flujo de texto pueden ocurrir conversiones de caracteres, lo que ocasiona
+que no haya una correspondencia uno a uno entre los caracteres que se escriben o se leen y
+los que hay en el dispositivo externo. Un flujo binario es una secuencia de bytes con una co-
+rrespondencia uno a uno con los del dispositivo externo. Esto es, no se realizan conversiones
+de caracteres. El número de bytes escritos o leı́dos es el mismo que en el dispositivo externo.
+El estándar ANSI especifica que se puede añadir un número definido de bytes nulos al final
+del flujo binario. Estos números se pueden usar para ajustar la información de tal forma que
+llene un sector del disco.
+
+En el sistema de E/S del ANSI de C, un archivo es un concepto lógico que puede ser aplicado
+a cualquier cosa, desde un archivo de disco a una terminal. Se asocia un flujo con un archi-
+vo especı́fico realizando una operación de apertura. Una vez que el archivo está abierto, la
+información puede ser intercambiada entre este y el programa. No todos los archivos tienen
+las mismas caracterı́sticas, por ejemplo, un archivo de disco puede permitir el acceso directo,
+mientras que un modem no, es decir, todos los flujos son iguales, pero no todos los archivos
+lo son.
+
+Si el archivo permite acceso directo, al abrir el archivo también se inicializa el indicador
+de posición del archivo al comienzo del mismo. Según se leen o se escriben caracteres del
+archivo, el indicador de posición se incrementa asegurando la progresión sobre el mismo.
+
+La parte más pequeña accesible de un disco es un sector. La información del disco se es-
+cribe o se lee sector a sector. Por tanto, aunque el programa sólo necesite un byte de datos,
+se leerá un sector de datos entero. Estos datos se colocan en una región de memoria llamada
+buffer hasta que puedan ser usados por el programa. Cuando se mandan datos a un archivo
+de disco, se colocan en el buffer hasta que se acumula la suficiente información para llenar
+un sector, en ese momento se escriben los daros en el disco.
+
+Cuando se cierra un flujo, se escribe el contenido de su buffer asociado en el dispositivo
+externo. A este proceso se le conoce como vaciado de buffer y garantiza que no quede infor-
+mación accidentalmente en el buffer del disco. Todos los archivos se cierran automáticamente
+cuando termina el programa, cuando main() devuelve el control al sistema operativo o me-
+diante una llamada a exit(). Sin embargo es mejor cerrar un archivo usando fclose() en el
+momento en que ya no se necesite.
+
+
+6.3.      Almacenamiento de datos en archivos
+   El almacenamiento de datos en variables y arreglos es temporal, al terminar un progra-
+ma, todos estos datos se pierden. Para la conservación permanente de grandes cantidades de
+datos se utilizan los archivos. Las computadoras almacenan los archivos en dispositivos de
+almacenamiento secundario
+
+Al igual que los caracteres están formados por bits, los campos se componen de caracte-
+6. Apuntadores y Archivos                                                                      13
+
+
+res. Un campo es un conjunto de caracteres que contiene un significado. Por ejemplo, un
+campo que contenga sólo letras mayúsculas y minúsculas puede ser usado para representar
+el nombre de una persona. Un registro (struct en C) se compone de varios campos relacio-
+nados y un archivo es un conjunto de registros relacionados.
+
+Para facilitar la recuperación de registros especı́ficos a partir de un archivo, por lo menos un
+campo de cada registro es seleccionado como registro clave. Un registro clave identifica a un
+registro como perteneciente a una persona o entidad en particular.
+
+Existen varias formas de organizar los registros dentro de un archivo. El tipo más popu-
+lar de organización se conoce como archivo secuencial, en el cual los registros se almacenan
+en orden, en relación con el campo de registro clave. El primer registro del archivo contiene
+el número más bajo de registro clave y los registros subsiguientes contendrán números cada
+vez más altos en el registro clave. Un grupo de archivos relacionados se conoce como una
+base de datos. Una colección de programas diseñada para crear y administrar bases de datos
+se conoce como un sistema de administración de bases de datos.
+
+C ve cada uno de los archivos como un flujo secuencial de bytes. Cada archivo termina
+con un marcador de fin de archivo o en un número de bytes especifico registrado en una
+estructura administrativa de datos mantenida por el sistema. Cuando un archivo se abre, se
+asocia un flujo con el archivo. Al empezar la ejecución de un programa se abren tres archivos
+y sus flujos asociados, la entrada estándar, la salida estándar y el error estándar. Los flujos
+proporcionan canales de comunicación entre archivos y programas
+
+El sistema de E/S de C proporciona al programador una interfaz consistente e indepen-
+diente del dispositivo al que se está accediendo. Es decir, el sistema de E/S de C proporciona
+un nivel de abstracción entre el programador y el dispositivo que se está usando. A esta
+abstracción se le llama flujo, al dispositivo real se le llama archivo.
+
+El sistema de archivos de C está diseñado para trabajar con dispositivos, incluyendo termina-
+les y controladores de disco. Aunque cada dispositivo es diferente, el sistema de archivos con
+buffer transforma cada uno de ellos en un dispositivo lógico llamado flujo. Todos los flujos
+se comportan de manera similar. Debido a que los flujos son independientes del dispositivo,
+la misma función puede escribirse en un archivo de disco o de consola.
+
+El sistema de archivos de ANSI C se compone de varias funciones interrelacionadas. Las
+funciones más comunes se muestran en la tabla 6.1.
+
+    Estas funciones requieren que se incluya el archivo cabecera stdio.h o io.h para las rutinas
+del sistema tipo UNIX.
+
+El almacenamiento de datos en un archivo es la forma en que los datos son estructura-
+dos y almacenados en el dispositivo de almacenamiento. El tipo almacenamiento se establece
+durante la fase de creación del archivo. La organización puede ser secuencial o directa.
+
+El tipo de acceso al archivo es el procedimiento para situarnos sobre un registro concre-
+14                                                 6.3. Almacenamiento de datos en archivos
+
+            Función                          Descripción
+             fopen()                        Abre un archivo
+             fclose()                       Cierra un archivo
+              putc()                Escribe un caracter en el archivo
+               getc()                  Lee un carácter del archivo
+              fseek()            Busca un byte especı́fico en el archivo
+            fprintf()        Escribe una cadena con formato en el archivo
+             fscanf()             Lee un dato con formato del archivo
+               feof()     Devuelve cierto si se ha llegado al final del archivo
+             ferror()         Devuelve cierto si se ha producido un error
+            rewind()    Coloca el localizador de posición del archivo al principio
+            remove()                       Elimina un archivo
+
+            Cuadro 6.1: Funciones más comunes del sistema de archivos con buffer
+
+
+
+to para hacer alguna operación con él. El tipo de acceso está condicionado por el tipo de
+almacenamiento fı́sico del archivo.
+
+
+6.3.1.     Almacenamiento secuencial
+    Un archivo organizado secuencialmente es un conjunto de registros lógicamente relacio-
+nados cuya secuencia de acceso está determinada por su ordenamiento. Los registros deben
+ser grabados consecutivamente cuando el archivo es creado, y deben ser leı́dos de la misma
+manera cuando es usado posteriormente como entrada.
+
+Los archivos secuenciales se utilizaban cuando el soporte de almacenamiento masivo más
+usual era la cinta magnética. Hoy dı́a no es habitual encontrarse con archivos de organi-
+zación interna secuencial. Pero sı́ que se utiliza el acceso secuencial, po su simplicidad y
+utilidad. Si se necesita acceder a registros individuales y no consecutivos, el acceso secuen-
+cial ofrece un rendimiento pobre y es preferible el acceso directo.
+
+Los registros deben ser recuperados de un archivo secuencial en orden consecutivo. El orden
+deseado para recuperar los registros debe dictar el orden en el cual deben grabarse.
+
+El acceso secuencial se implementa con un indicador de posición que señala qué registro
+fue el último que se accedió. Al abrir el archivo, el indicador se sitúa en el primer campo
+del primer registro. Cada acceso sobre el archivo desplazará el indicador de posición hacia el
+siguiente registro, hasta que ya no haya más registros que leer.
+
+Cuando un archivo secuencial se abre para escribir datos en él, el indicador de posición
+se sitúa justo después del último byte del mismo, de manera que los datos sólo se pueden
+añadir al final.
+6. Apuntadores y Archivos                                                                    15
+
+
+6.3.2.     Almacenamiento directo
+   Un archivo directo consiste en una colección de registros de longitud fija almacenados
+uno al lado del otro en un dispositivo de almacenamiento de acceso directo. El almacena-
+miento de este tipo de archivos se restringe a los discos por que el acceso a registros se hace
+generalmente en orden aleatorio.
+
+Se utiliza la forma directa cuando existe la necesidad de leer registros individuales direc-
+tamente. En un archivo directo existe una relación predecible entre la llave usada para iden-
+tificar un registro y su localización dentro del archivo. Sin embargo, el ordenamiento lógico
+de los registros no necesita tener ninguna relación con su secuencia fı́sica. Los registros no
+necesariamente aparecen fı́sicamente ordenados de acuerdo al valor de sus llaves.
+
+Cada registro en un archivo de organización directo se puede referir por medio de una di-
+rección, la cual indica su distancia o desplazamiento desde el origen del archivo. Al primer
+registro en un archivo relativo se le asigna el valor 1, 2 al siguiente y ası́ sucesivamente. De
+este modo, la dirección relativa de un valor entero que refleja su posición respecto al primer
+registro del archivo.
+
+
+6.4.      Operaciones con archivos
+6.4.1.     Apertura de archivos
+    Un apuntador a un archivo es un apuntador a una información que define varias cosas
+sobre él incluyendo su nombre, estado y posición actual. El apuntador a archivo identifica
+un archivo de disco especı́fico y lo utiliza el flujo asociado para dirigir el funcionamiento de
+las funciones de E/S con buffer. Un apuntador a archivo es una variable de tipo apuntador
+a FILE, definido en stdio.h.
+
+La función fopen() abre un flujo para que pueda ser utilizado, lo asocia a un archivo y
+devuelve el apuntador a FILE de ese flujo. La función fopen() tiene el siguiente prototipo
+
+FILE *fopen(const char *nombre_archivo, const char *modo);
+
+   Donde modo apunta a una cadena que contiene el estado de apertura deseado. Los valores
+permitidos para modo se muestran en la tabla 6.2
+Nombre archivo es una cadena de caracteres que representa un nombre válido de archivo y
+puede incluir una especificación de ruta.
+
+La función fopen() devuelve un apuntador de tipo FILE. Este apuntador identifica el ar-
+chivo y se usa en la mayorı́a de las otras funciones del sistema de archivos. No debe ser
+nunca alterado por el código.
+
+Cuando se abre un archivo en modo texto, las secuencias retorno de carro/salto de lı́nea
+se convierten a caracteres de salto de lı́nea en la lectura. En la escritura, ocurre lo contra-
+rio, los caracteres de salto de lı́nea se convierten a retorno de carro/salto de lı́nea. Estas
+conversiones no ocurren con archivos binarios.
+    16                                                               6.4. Operaciones con archivos
+
+                  Modo                      Descripción
+                     “r”        Abre un archivo de texto para lectura
+                    “w”        Crea un archivo de texto para escritura
+                     “a”        Abre un archivo de texto para añadir
+                    “rb”        Abre un archivo binario para lectura
+                   “wb”        Abre un archivo binario para escritura
+                    “ab”         Abre un archivo binario para añadir
+                   “r+”   Abre un archivo de texto para lectura/escritura
+                   “w+”    Crea un archivo de texto para lectura/escritura
+                   “a+” Abre o crea un archivo de texto para lectura/escritura
+                  “r+b”    Abre un archivo binario para lectura/escritura
+                  “w+b”    Crea un archivo binario para lectura/escritura
+                  “a+b” Abre o crea un archivo binario para lectura/escritura
+                    “rt”        Abre un archivo de texto para lectura
+                   “wt”        Crea un archivo de texto para escritura
+                    “at”        Abre un archivo de texto para añadir
+                   “r+t”  Abre un archivo de texto para lectura/escritura
+                  “w+t”    Crea un archivo de texto para lectura/escritura
+                  “a+t” Abre o crea un archivo de texto para lectura/escritura
+
+                              Cuadro 6.2: Modos de apertura de archivos
+
+
+       Si se desea abrir un archivo llamado prueba.txt para escritura, se puede escribir la si-
+    guiente instrucción
+1   fp=fopen("prueba.txt","w");
+         Donde fp es una variable de tipo FILE*.
+
+    Normalmente se utiliza el siguiente fragmento de código
+1   if((fp=fopen("prueba.txt","w"))==NULL){
+2      printf("ERROR: No se puede abrir el archivo/n");
+3      exit(1);
+4      }
+         Este método detecta cualquier error al abrir el archivo como puede ocurrir si el archivo
+    está protegido contra escritura o si está lleno, antes de cualquier intento de escritura sobre
+    él. Se utiliza un nulo que es 0 porque ningún apuntador a archivo toma nunca este valor.
+    NULL es una macro definida en stdio.h.
+
+    Si se utiliza fopen() para abrir un archivo para escritura, cualquier archivo que ya existiese
+    con ese nombre se borra y se crea uno nuevo. Si no existe ningún archivo con ese nombre,
+    se crea uno nuevo. Si se quiere añadir información al final del archivo, se debe utilizar el
+    modo “a”. si no existe el archivo se creará. Sólo se pueden abrir archivos que ya existen para
+    operaciones de lectura, si el archivo no existe devuelve un error. Si se abre un archivo para
+    lectura/escritura, si ya existe no será borrado, si no existe será creado.
+    6. Apuntadores y Archivos                                                                    17
+
+
+    6.4.2.     Lectura y escritura de archivos
+        La función putc() escribe caracteres en un flujo que ha sido abierto previamente para
+    escritura utilizando fopen(). El prototipo de putc() es el siguiente
+
+    int puc(int c,FILE *fp);
+
+        Donde fp es el apuntador a archivo devuelto por fopen() y c es el caracter que se va a
+    escribir. El apuntador a archivo le dice a putc() en qué archivo de disco debe escribir. c se
+    define como int, pero sólo se utiliza el byte menos significativo.
+
+    Si una operación con putc() tiene éxito, devuelve el caracter escrito, en otro caso devuelve
+    EOF.
+
+    La función getc() lee caracteres de un flujo abierto en modo lectura mediante fopen(). El
+    prototipo de getc() es el siguiente
+
+    int getc(FILE *fp);
+
+         Donde fp es un apuntador de tipo FILE devuelto por fopen(). getc() devuelve un entero,
+    pero el byte más significativo es 0. La función getc() devuelve EOF cuando se ha alcanzado
+    el final del archivo.
+
+    Para leer un archivo de texto se puede utilizar el siguiente fragmento de código
+
+1   c=getc(fp);
+2   while(c!=EOF){
+3      c=getc(fp);
+4      }
+
+        Cuando se abre un archivo para entrada binaria, se puede leer un valor entero igual al de
+    la marca EOF. Esto podrı́a hacer que la rutina de la lectura indique una condición de fin de
+    archivo aún cuando el fin fı́sico no se haya alcanzado. Para resolver este problema la función
+    feof() determina cuándo se ha alcanzado el fin del archivo leyendo datos binarios. La función
+    feof() tiene el siguiente prototipo
+
+    int feof(FILE *fp);
+
+        Donde fp identifica al archivo. La función feof() devuelve un valor distinto de 0 si se
+    ha alcanzado el final del archivo, en otro caso devuelve 0. Por ejemplo, observe el siguiente
+    fragmento de código.
+
+1   while(!feof(fp)){
+2      c=getc(fp);
+3      }
+     18                                                                 6.4. Operaciones con archivos
+
+
+         El fragmento lee un archivo binario hasta que se encuentre el final del mismo. También
+     se puede aplicar este método a archivos de texto.
+
+     La función fclose() cierra un flujo que fue abierto mediante una llamada a fopen(). Escribe
+     toda la información que todavı́a se encuentre en el buffer de disco al archivo y realiza un
+     cierre formal del archivo a nivel del sistema operativo. Una llamada a fclose() también libera
+     el bloque de control de archivo asociado con el flujo, dejándolo libre para su reutilización.
+     Existe un lı́mite del sistema operativo de archivos abiertos que puede haber simultáneamen-
+     te, por lo que es necesario cerrar un archivo antes de abrir otro. La función fclose() tiene el
+     siguiente prototipo
+
+     int fclose(FILE *fp);
+
+        Donde fp es el apuntador al archivo devuelto por fopen(). Si devuelve un valor 0, significa
+     que la operación de cierre ha tenido éxito; si ocurre un error devuelve EOF. fclose() sólo falla
+     cuando se ha retirado antes de tiempo un disco de la unidad o cuando no queda espacio libre
+     en el disco.
+
+     La función ferror() determina si se ha producido un error en una operación sobre un ar-
+     chivo. La función ferror() tiene el siguiente prototipo
+
+     int ferror(FILE *fp);
+
+        Donde fp es un apuntador a un archivo válido. Devuelve cierto si se ha producido un error
+     durante la última operación sobre el archivo; en caso contrario devuelve falso. Devido a que
+     cada operación sobre un archivo actualiza la condición de error, se debe llamar a ferror() in-
+     mediatamente después de cada operación de este tipo; de lo contrario, el error puede perderse.
+
+     La función rewind() inicializa el indicador de posición al principio del archivo indicado por
+     su argumento. Su prototipo es el siguiente
+
+     void rewind(FILE *fp);
+
+          Donde fp es un apuntador a archivo válido.
+
+     Observe el siguiente programa
+
+1    #include <stdio.h>
+2    #include <stdlib.h>
+3    int main(){
+4       FILE *fp;
+5       char c;
+6       char archivo[]="wchar.txt";
+7       if((fp=fopen(archivo,"wb"))==NULL){
+8          printf("ERROR: No se puede abrir el archivo\n");
+9          exit(1);
+10      }
+     6. Apuntadores y Archivos                                                                  19
+
+
+11        printf("Se ha creado el archivo %s\nIngrese $ para
+     ,→    finalizar\n\n",archivo);
+12        do{
+13           c=getchar();
+14           putc(c,fp);
+15        }while (c!='$');
+16        fclose(fp);
+17        return 0;
+18   }
+
+        El programa lee caracteres del teclado y los escribe en el archivo de disco wchar.txt hasta
+     que el usuario introduce un signo de pesos
+
+1    #include <stdio.h>
+2    #include <stdlib.h>
+3    int main(){
+4        FILE *fp;
+5        char c;
+6        char archivo[]="wchar.txt";
+7        if((fp=fopen(archivo,"rb"))==NULL){
+8           printf("ERROR: No se puede abrir el archivo");
+9           return 1;
+10       }
+11       printf("Se ha abierto el archivo %s correctamente/nDesplegando
+      ,→  contenido\n\n",archivo);
+12       c=getc(fp);
+13       while(c!=EOF){
+14          putchar(c);
+15          c=getc(fp);
+16       }
+17       fclose(fp);
+18       return 0;
+19   }
+
+          El programa lee el archivo de texto wchar.txt y despliega en pantalla su contenido.
+
+1    #include <stdio.h>
+2    #include <stdlib.h>
+3    int main(){
+4       FILE *entrada,*salida;
+5       char c;
+6       char entra[]="wchar.bin",sale[]="copwchar.bin";
+7       //abriendo archivo fuente
+8       if((entrada=fopen(entra,"rb"))==NULL){
+9          printf("ERROR: No se puede abrir el archivo fuente\n");
+10         return 1;
+11      }
+     20                                                           6.4. Operaciones con archivos
+
+
+12       //abriendo archivo destino
+13       if((salida=fopen(sale,"wb"))==NULL){
+14          printf("ERROR: No se puede abrir el archivo destino\n");
+15          return 1;
+16       }
+17       printf("Se han abierto los archivos %s y %s correctamente \ncopiando
+      ,→  contenido...\n\n",entra,sale);
+18       //si hay un caracter en el archivo fuente, se escribe en el archivo
+      ,→  destino
+19       while(!feof(entrada)){
+20          c=getc(entrada);
+21          if(!feof(entrada)){
+22             putc(c,salida);
+23          }
+24       }
+25       printf("\n\nDesplegando contenido de %s\n\n",entra);
+26       rewind(entrada); //regresando apuntador de archivo a inicio
+27       c=getc(entrada);
+28       while(c!=EOF){
+29          putchar(c);
+30          c=getc(entrada);
+31       }
+32       fclose(salida);
+33       if((salida=fopen(sale,"rb"))==NULL){
+34          printf("ERROR: No se puede abrir el archivo destino\n");
+35          return 1;
+36       }
+37       printf("\n\nDesplegando contenido de %s\n\n",sale);
+38       rewind(salida);
+39       c=getc(salida);
+40       while(c!=EOF){
+41          putchar(c);
+42          c=getc(salida);
+43       }
+44       fclose(entrada);
+45       fclose(salida);
+46       return 0;
+47   }
+
+        El programa copia archivos de cualquier tipo. Se abren los archivos en modo binario y se
+     usa la función feof() para comprobar el final del archivo.
+
+     Las funciones getw() y putw() se usan para leer y escribir enteros de y en un archivo de
+     disco. Estas funciones trabajan exactamente igual que putc() y getc(), excepto que en lugar
+     de leer o escribir un caracter, leen o escriben 4 bytes. Sus prototipos son los siguientes
+
+     int putw(int valor,FILE *fp);
+     6. Apuntadores y Archivos                                        21
+
+
+
+     int getw(FILE *fp);
+
+        Por ejemplo, observe la siguiente instrucción
+
+1    putw(100,fp);
+
+        Escribe un entero en un archivo apuntado por fp.
+
+     Observe el siguiente programa
+
+1    #include <stdio.h>
+2    #include <stdlib.h>
+3    int main(){
+4       FILE *fp;
+5       char archivo[]="arregloint.bin";
+6       int lista[]={-1,10,20,30,40,50};
+7       int elementos= sizeof(lista)/sizeof(int);
+8       int i;
+9       //abriendo archivo
+10      if((fp=fopen(archivo,"w+b"))==NULL){
+11         printf("ERROR: No se puede abrir el archivo\n");
+12         exit (1);
+13      }
+14      //escribiendo enteros en archivo
+15      printf("\nEscribiendo elementos en archivo %s...",archivo);
+16      for(i=0;i<elementos;i++){
+17         printf("\nEscribiendo %d",lista[i]);
+18         putw(lista[i],fp);
+19         if(ferror(fp)){
+20            perror("Error durante la escritura");
+21            exit(1);
+22         }
+23      }
+24      rewind(fp); //regresando apuntador de archivo a inicio
+25      printf("\n\nLeyendo elementos de archivo %s...\n",archivo);
+26      while(1){
+27         i=getw(fp);
+28         if(feof(fp) ||ferror(fp)){
+29            break;
+30         }
+31         printf("Leyendo %d\n",i);
+32      }
+33      if(ferror(fp)){
+34         perror("Error durante la lectura");
+35      }
+36      fclose(fp);
+     22                                                                 6.4. Operaciones con archivos
+
+
+37        return 0;
+38   }
+
+        El programa escribe en el archivo binario arregloint.bin el contenido de un arreglo de
+     enteros llamado lista y a continuación despliega el contenido de dicho archivo.
+
+     Las funciones fputs() y fgets() leen y escriben cadenas de caracteres sobre archivos. Tie-
+     nen los siguientes prototipos
+
+     int fputs(const char *cad, FILE *fp);
+
+     int fgets(char *cad, int longitud, FILE *fp);
+
+         La función fputs() funciona como puts(), pero escribe la cadena en el flujo especificado.
+     La función fgets() lee una cadena del flujo especificado hasta que se lee un caracter de salto
+     de lı́nea o hasta que se han leı́do longitud-1 caracteres. Si se lee un caracter de salto de lı́nea,
+     este forma parte de la cadena. Cuando fgets() termina, la cadena resultante acaba con un
+     caracter nulo.
+
+     Observe el siguiente programa
+
+ 1   #include <stdio.h>
+ 2   #include <stdlib.h>
+ 3   #include <string.h>
+ 4   #define n 80
+ 5
+
+ 6   int main(){
+ 7      FILE *fp;
+ 8      char buffer[n];
+ 9      char archivo[]="archivo.bin";
+10
+
+11      if((fp=fopen(archivo,"w+b"))==NULL){
+12         printf("ERROR: No se puede abrir el archivo\n");
+13         return 1;
+14      }
+15      printf("Se ha abierto el archivo %s para escritura \n Ahora puede
+     ,→  ingresar datos, finalice cada linea con enter\nPara salir pulse
+     ,→  Ctrl+z\n\n",archivo);
+16      fgets(buffer,100,stdin);
+17      while(strncmp(buffer,"#",1)){
+18         printf("%d \n",strncmp(buffer,"#",1));
+19         fputs(buffer,fp);
+20         if (ferror(fp)){
+21            perror("ERROR: Linea demasiado larga\n");
+22            exit(2);
+23         }
+24         fputc('\n',fp);
+     6. Apuntadores y Archivos                                                                      23
+
+
+25          scanf("%s",buffer);
+26       }
+27       rewind(fp);
+28       printf("\n\nSe ha abierto el archivo %s para
+      ,→  lectura\nDesplegando...\n\n", archivo);
+29       while(fgets(buffer,n,fp)!=NULL){
+30          printf("%s",buffer);
+31          if (ferror(fp)){
+32             perror("Error durante la lectura\n");
+33          }
+34       }
+35       fclose(fp);
+36       return 0;
+37   }
+
+        El programa lee lı́neas de texto y las almacena en un archivo. Cada lı́nea del archivo va
+     seguida del caracter ‘\n’, posteriormente se despliega el contenido del archivo creado.
+
+     Las funciones fread() y fwrite() leen y escriben bloques de datos. Sus prototipos son los
+     siguientes
+
+     size_t fread(void *buffer,size_t num_bytes,size_t cuenta, FILE *fp);
+
+     size_t fwrite(const void *buffer,size_t num_bytes,size_t cuenta, FILE *fp);
+
+        En el caso de fread() buffer es un puntero a una región de memoria donde escribir los
+     datos leı́dos del archivo. En fwrite() buffer es un puntero a la información que va a ser escrita
+     en el archivo.
+
+     El número de bytes a leer o escribir se especifica con num bytes.
+
+     El argumento cuenta determina cuántos elementos se van a leer o escribir.
+
+     fp es un apuntador a un flujo abierto previamente.
+
+     La función fwrite() almacena los datos numéricos en formato binario. Esto quiere decir que
+     un int ocupa 4 bytes, un long 8 bytes, un float 8 bytes y un double 16 bytes.
+
+     fread() y fwrite() pueden leer y escribir cualquier tipo de información, siempre y cuando
+     el archivo se haya abierto para operaciones con datos binarios. Por ejemplo, observe el si-
+     guiente programa.
+
+1    #include <stdio.h>
+2    #include <stdlib.h>
+3    int main(){
+4       FILE *fp;
+5       float f=12.34,l;
+     24                                                             6.4. Operaciones con archivos
+
+
+ 6        char archivo[]="binario.bin";
+ 7        if((fp=fopen(archivo,"wb"))==NULL){
+ 8           printf("ERROR: No se puede abrir el archivo\n");
+ 9           return 1;
+10        }
+11        printf("Se ha creado el archivo %s\nGuardando...\n\n",archivo);
+12        fwrite(&f,sizeof(float),1,fp);
+13        fclose(fp);
+14        if((fp=fopen(archivo,"rb"))==NULL){
+15           printf("ERROR: No se puede abrir el archivo\n");
+16           return 1;
+17        }
+18        printf("Se ha abierto el archivo %s\nDesplegando...\n\n",archivo);
+19        fread(&l,sizeof(float),1,fp);
+20        printf("%f",l);
+21        fclose(fp);
+22        return 0;
+23   }
+
+        El programa escribe un float en un archivo en disco y posteriormente lo lee y despliega
+     en pantalla. El buffer en el programa es sólo una variable.
+
+     Una de las aplicaciones más útiles de fread() y fwrite() es la lectura y escritura de arre-
+     glos o estructuras. Por ejemplo, observe los siguientes programas
+
+ 1   #include <stdio.h>
+ 2   int main(){
+ 3      FILE *fp;
+ 4      int i;
+ 5      float balance[100];
+ 6      char archivo[]="arreglofloat.bin";
+ 7      if((fp=fopen(archivo,"wb"))==NULL){
+ 8         printf("ERROR: No se puede abrir el archivo\n");
+ 9         return 1;
+10      }
+11      printf("Se ha creado el archivo %s\nGuardando...\n\n",archivo);
+12      for(i=0;i<100;i++){
+13         balance[i]=(float)i*5;
+14      }
+15      fwrite(balance,sizeof(balance),1,fp);
+16      fclose(fp);
+17      for(i=0;i<100;i++){
+18         balance[i]=0.0;
+19      }
+20      if((fp=fopen(archivo,"rb"))==NULL){
+21         printf("ERROR: No se puede abrir el archivo\n");
+22         return 1;
+     6. Apuntadores y Archivos                                                                  25
+
+
+23       }
+24       printf("Se ha abierto el archivo %s\nDesplegando...\n\n",archivo);
+25       fread(balance,sizeof(balance),1,fp);
+26       for(i=0;i<100;i++){
+27          printf("\n%f",balance[i]);
+28       }
+29       fclose(fp);
+30       return 0;
+31   }
+
+        El programa escribe el contenido del arreglo float balance en el archivo arreglofloat.bin,
+     usando una única sentencia fwrite(). Luego lee el arreglo usando una única sentencia fread()
+     y despliega su contenido.
+
+1    #include <stdio.h>
+2    #include <stdlib.h>
+3    #include <ctype.h>
+4    #include <string.h>
+5    int main(){
+6        FILE *fp;
+7        char archivo[]="registros.bin";
+8        struct r{
+9           char ref[20];
+10          long precio;
+11       }reg;
+12       int bytesreg=sizeof(reg);
+13       char sprecio[10],op;
+14       if((fp=fopen(archivo,"wb"))==NULL){
+15          printf("ERROR: No se puede abrir el archivo\n");
+16          return 1;
+17       }
+18       printf("Se ha abierto el archivo %s para escritura\nPara salir pulse
+      ,→  FIN\n\n",archivo);
+19       printf("Referencia: ");
+20       while(strcmp(gets(reg.ref),"FIN")!=0){
+21          printf("Precio: ");
+22          gets(sprecio);
+23          reg.precio=atol(sprecio);
+24          fwrite(&reg,bytesreg,1,fp);
+25          printf("\nReferencia: ");
+26       }
+27       fclose(fp);
+28       do{
+29          printf("\n\nDesea desplegar el archivo? (s/n) ");
+30          op=tolower(getchar());
+31       }while(op!='s' && op!='n');
+32       if (op=='s'){
+     26                                                              6.4. Operaciones con archivos
+
+
+33          if((fp=fopen(archivo,"rb"))==NULL){
+34             printf("ERROR: No se puede abrir el archivo\n");
+35             return 1;
+36          }
+37          printf("\n\n\nSe ha abierto el archivo %s para
+      ,→  lectura\nDesplegando...\n\n",archivo);
+38          fread(&reg,bytesreg,1,fp);
+39          while(!feof(fp)){
+40             printf("\nReferencia: %s\n",reg.ref);
+41             printf("Precio: %ld\n",reg.precio);
+42             fread(&reg,bytesreg,1,fp);
+43          }
+44       }
+45       fclose(fp);
+46       return 0;
+47   }
+
+        El programa lee registros formados por dos campos, ref y precio, y los almacena en un
+     archivo llamado registros.bin. Una vez creado el archivo, se dispone de una opción para des-
+     plegar el archivo registro a registro.
+
+     El uso de fread() y fwrite() para leer y escribir datos complejos es más eficiente que el
+     uso de llamadas sucesivas a getc() y putc().
+
+     Utilizando el sistema de E/S con buffer se puede realizar operaciones de lectura y escri-
+     tura directa con fseek(), que sitúa el indicador de posición del archivo. Su prototipo es el
+     siguiente
+
+     int fseek(FILE *fp, long num_bytes, int origen);
+
+         Donde fp es un apuntador a archivo devuelto por una llamada a fopen(); num bytes es
+     el número de bytes a partir del origen que supondrán la nueva posición y origen es una de
+     las macros definidas en stdio.h que se muestran en la tabla 6.3
+
+                                        Origen             Macro
+                                  Principio de archivo   SEEK SET
+                                    Posición actual     SEEK CUR
+                                   Final de archivo      SEEK END
+
+                                     Cuadro 6.3: Macros de fseek()
+
+
+         Las macros están definidas como valores enteros, SEEK SET es 0, SEEK CUR es 1 y
+     SEEK END es 2. De esta forma, para situarse a num bytes desde el principio del archivo,
+     origen debe ser SEEK SET. Para situarse a partir de la posición actual se utiliza SEEK CUR
+     y para situarse a partir del final del archivo se utiliza SEEK END.
+     6. Apuntadores y Archivos                                                                      27
+
+
+     num bytes es de tipo int long con el fin de admitir archivos de mayor tamaño.
+
+     La función fseek() devuelve un 0 si no se ha producido un error y un valor distinto de 0
+     en caso contrario.
+
+     No se recomienda utilizar fseek() con archivos de texto, ya que las traducciones de caracteres
+     producen errores de localización. Se sugiere utilizar fseek() sólo con archivos binarios. Por
+     ejemplo, observe el siguiente programa
+
+1    #include <stdio.h>
+2    int main(){
+3       FILE *fp;
+4       float l;
+5       char archivo[]="arreglofloat.bin";
+6       if((fp=fopen(archivo,"rb"))==NULL){
+7          printf("ERROR: No se puede abrir el archivo\n");
+8          return 1;
+9       }
+10      //moviendo apuntador al byte 12 desde inicio de archivo
+11      fseek(fp,12L,0);
+12      printf("Se ha abierto el archivo %s\nDesplegando...\n\n",archivo);
+13      fread(&l,sizeof(float),1,fp);
+14      //el tama~no de float es 4, se despliega el cuarto float
+15      printf("Tamao de float: %d \n",sizeof(float));
+16      printf("%f",l);
+17      fclose(fp);
+18      return 0;
+19   }
+
+        El programa lee y despliega el byte número 12 del archivo arreglofloat.bin.
+
+     La función fseek() devuelve 0 cuando ha tenido éxito y un valor distinto cuando se pro-
+     duce error.
+
+     La función ftell() da como resultado la posición actual del puntero de E/S, dentro del archivo
+     apuntado por fp. Esta posición es relativa al principio del archivo. Su prototipo es el siguiente
+
+     long ftell(FILE*fp);
+
+        Observe el siguiente programa
+
+1    #include <stdio.h>
+2    #include <stdlib.h>
+3    #include <ctype.h>
+4    int main(){
+5       FILE *fp;
+6       char archivo[]="registros.bin";
+     28                                                 6.4. Operaciones con archivos
+
+
+ 7      struct r{
+ 8         char ref[20];
+ 9         long precio;
+10      }reg;
+11      int bytesreg=sizeof(reg);
+12      char sprecio[10],op;
+13      int totalreg,nreg,c;
+14      long desp;
+15      if((fp=fopen(archivo,"r+b"))==NULL){
+16         printf("ERROR: No se puede abrir el archivo\n");
+17         return 1;
+18      }
+19      //moviendo apuntador 0 bytes desde fin de archivo
+20      fseek(fp,0L,SEEK_END);
+21      //ftell regresa la posición de apuntador en bytes recorridos desde
+     ,→  inicio de archivo
+22      totalreg=ftell(fp)/bytesreg;
+23      printf("Se ha abierto el archivo %s para
+     ,→  Lectura\nDesplegando...\n",archivo);
+24      do{
+25         printf("\n\nIngrese el no. de registro entre 1 y %d (0 para salir):
+     ,→  ",totalreg);
+26         c=scanf("%d",&nreg);
+27         if(c && (nreg>=1) && (nreg<=totalreg)){
+28            //calculando el número byte donde empieza el registro
+29            desp=(long)(nreg-1)*bytesreg;
+30            // desplazando apuntador al principio del registro
+31            fseek(fp,desp,SEEK_SET);
+32            fread(&reg,bytesreg,1,fp);
+33            printf("\nReferencia: %s\n",reg.ref);
+34            printf("Precio: %ld\n",reg.precio);
+35            do{
+36               printf("\nDesea modificar el registro? (s/n): ");
+37               scanf("%c",&op);
+38               op=tolower(getchar());
+39            }while(op!='s' && op!='n');
+40            if(op=='s'){
+41               printf("Referencia: ");
+42               scanf("%s",reg.ref);
+43               printf("Precio: ");
+44               scanf("%s",&sprecio);
+45               //atol convierte una cadena de números a long
+46               reg.precio=atol(sprecio);
+47               //regresando apuntador al principio del registro
+48               fseek(fp,-bytesreg,SEEK_CUR);
+49               fwrite(&reg,bytesreg,1,fp);
+     6. Apuntadores y Archivos                                                                   29
+
+
+50             }
+51          }
+52       }while(nreg);
+53       fclose(fp);
+54       return 0;
+55   }
+
+         El programa lee registros formados por dos campos, ref y precio del archivo llamado regis-
+     tros.bin y los despliega en pantalla, una vez leı́dos, se dispone de una opción para modificar
+     el registro.
+
+     Además de las funciones básicas de E/S, el sistema de E/S con buffer incluye fprintf() y
+     fscanf(). Estas funciones se comportan exactamente igual que printf() y scanf(), excepto que
+     operan sobre archivos de disco. Los prototipos de fprintf() y fscanf() son los siguientes
+
+     int fprintf(FILE *fp, conts char *cadena_fmt,...);
+
+     int fscanf(FILE *fp, conts char *cadena_fmt,...);
+
+        Donde fp es un apuntador a archivo devuelto por una llamada a fopen(). fprintf() y fs-
+     canf() dirigen sus operaciones de E/S al archivo al que apunta fp.
+
+     Cuando fprintf() almacena los datos sobre el disco, los caracteres son almacenados uno por
+     byte, los enteros y flotantes requieren un byte por cada dı́gito.
+
+     En la función scanf() cada argumento debe ser un apuntador a una variable donde se al-
+     macenará el valor leı́do. El tipo de cada una de estas variables debe corresponder a la espe-
+     cificación de formato indicada para cada variable.
+
+     Observe los siguientes programas
+
+1    #include <stdio.h>
+2    #include <stdlib.h>
+3    #include <ctype.h>
+4    #include <string.h>
+5    void agregar(void);
+6    void buscar(void);
+7    int menu(void);
+8
+
+9    int main(){
+10      int op;
+11      do{
+12         op=menu();
+13         switch(op){
+14            case (1):
+15               agregar();
+16               break;
+     30                                                 6.4. Operaciones con archivos
+
+
+17             case (2):
+18                buscar();
+19                break;
+20           }
+21        }while(op!=3);
+22        return 0;
+23   }
+24
+
+25   int menu(void){
+26      int c;
+27      do{
+28         printf("\n\nMENU\n\n");
+29         printf("1. Agregar\n");
+30         printf("2. Buscar\n");
+31         printf("3. Terminar\n");
+32         printf("\nSu opcin...");
+33         scanf("%d",&c);
+34      }while(c!=1 && c!=2 && c!=3);
+35      return c;
+36   }
+37
+
+38   void agregar(void){
+39      FILE *fp;
+40      char archivo[]="telep.txt";
+41      char nombre[80];
+42      int num, pre;
+43      if((fp=fopen(archivo,"a"))==NULL){
+44         printf("ERROR: No se puede abrir el archivo\n");
+45         exit (1);
+46      }
+47      printf("\nIngrese nombre, prefijo y telfono: ");
+48      //leyendo del flujo de entrada
+49      fscanf(stdin,"%s %d %d", nombre,&pre,&num);
+50      fscanf(stdin,"%*c");   //ignorando el enter
+51      //escribiendo en el archivo
+52      fprintf(fp,"%s %d %d\n", nombre,pre,num);
+53      fclose (fp);
+54   }
+55
+
+56   void buscar(void){
+57      FILE *fp;
+58      char archivo[]="telep.txt";
+59      char nom[80],nom2[80];
+60      int num, pre;
+61      if((fp=fopen(archivo,"r"))==NULL){
+62         printf("ERROR: No se puede abrir el archivo\n");
+     6. Apuntadores y Archivos                                                                31
+
+
+63          exit (1);
+64       }
+65       printf("\nNombre?: ");
+66       scanf("%s",nom);
+67       while(!feof(fp)){
+68          fscanf(fp,"%s %d %d\n",nom2,&pre,&num);
+69          if (!strcmp(nom,nom2)){
+70             printf("%s: (%d) %d\n", nom,pre,num);
+71             break;
+72          }
+73       }
+74       fclose(fp);
+75   }
+
+         El programa mantiene un sencillo directorio telefónico en un archivo de disco. Se puede
+     introducir nombres y números o buscar un número dado un nombre. La información se
+     despliega en pantalla de la misma forma que si se hubiese usado printf().
+
+1    #include <stdio.h>
+2    #include <stdlib.h>
+3
+
+4    int main(){
+5        FILE *fp;
+6        char buffer[128];
+7        char archivo[]="tabla.txt";
+8        long e,totale;
+9        float r,totalr;
+10       int i,c='A';
+11       if((fp=fopen(archivo,"r"))!=NULL){
+12          printf("Se ha abierto el archivo %s para
+      ,→  lectura\nDesplegando...\n\n",archivo);
+13          for(i=0,totale=0,totalr=0.0;i<10;i++){
+14             fscanf(fp,"%s %c: %ld %f",buffer,&c,&e,&r);
+15             totale+=e;
+16             totalr+=r;
+17             printf("\t%s %c: %7ld %9.2f\n",buffer,c,e,r);
+18          }
+19          printf("\n\tTotal:%7ld %9.2f\n",totale,totalr);
+20       }
+21       else{
+22          if((fp=fopen(archivo,"w"))==NULL){
+23             printf("ERROR: No se puede crear el archivo\n");
+24             return 1;
+25          }
+26          printf("Se ha creado el archivo %s para
+      ,→  escritura\nEscribiendo...\n\n",archivo);
+27          for(i=0,e=99999,r=3.14;i<10;i++){
+     32                                                                 6.4. Operaciones con archivos
+
+
+28                fprintf(fp,"\tFila %c: %7ld %9.2f\n",c++,e/=2,r*=2);
+29            }
+30        }
+31        fclose(fp);
+32        return 1;
+33   }
+
+         Aunque fprintf() y fscanf() a menudo son la forma escribir y leer datos ordenadamente
+     en archivos de disco, no siempre son la más eficiente. Debido a que los datos se escriben con
+     formato ASCII, en lugar de binario, se produce una sobrecarga extra en cada llamada. Por
+     eso, si lo importante es la velocidad o el tamaño del archivo, se debe utilizar fread() y fwrite().
+
+     La función remove() elimina el archivo especificado. Su prototipo es el siguiente
+
+     int remove(const char *nombre_archivo);
+
+          Devuelve 0 si tiene éxito y un valor distinto si falla.
+
+     Observe el siguiente programa
+
+ 1   #include <stdio.h>
+ 2   int main(){
+ 3      char nom[80];
+ 4      printf("Ingrese el nombre del archivo que desea borrar: ");
+ 5      scanf("%s",nom);
+ 6      printf("\n\nBorrando...");
+ 7      if(remove(nom)){
+ 8         printf("\nERROR: No se puede borrar el archivo");
+ 9         return 1;
+10      }
+11      else{
+12         printf("\nEl archivo %s ha sido borrado",nom);
+13         return 0;
+14      }
+15   }
+
+          El programa elimina el archivo especificado por el usuario.
+
+     Cuando se trabaje con archivos de caracteres, como los creados por procesadores de tex-
+     to, en el sistema de E/S con buffer, se debe usar el modo texto y las funciones getc() y
+     putc(). Cuando sea necesario guardar datos binarios o tipos de datos complejos, se debe usar
+     archivos binarios y las funciones fread() y fwrite().
+Apéndice A
+
+Ejercicios
+
+A.1.      Apuntadores
+ 1. Elabore un programa en lenguaje C que defina y pruebe una función con el siguiente
+    prototipo: void iniciarArreglo(int *a, int n, int rango). La función deberá inicializar
+    los n elementos referidos por el apuntador a con números aleatorios entre 0 y rango.
+ 2. Elabore un programa en lenguaje C que defina y pruebe una función con el siguiente
+    prototipo: void iniciarArreglo2(int *a, int n, int valor). La función deberá inicializar
+    los n elementos referidos por el apuntador a, con el valor valor.
+ 3. Elabore un programa en lenguaje C que defina y pruebe una función con el siguiente
+    prototipo: void imprimirArreglo(const int *a, int n, int c). La función deberá desplegar
+    los n elementos referidos por el apuntador a, con c elementos por renglón.
+
+
+A.2.      Almacenamiento de datos en archivos
+ 1. Escriba un programa que utilice archivos, estructuras y funciones para llevar el control
+    de cuentas bancarias.
+
+    El usuario introducirá los datos de las cuentas.
+
+    El programa debe mostrar el siguiente menú inicial y realizar las acciones correspon-
+    dientes
+       a) Agregar cuenta
+       b) Reportes
+       c) Salir
+    Al elegir la opción 1 el programa debe leer los datos de la cuenta y guardarlos en el
+    archivo.
+    Al elegir la opción 2 el programa debe mostrar el siguiente menú de reportes y realizar
+    las acciones correspondientes.
+       a) Cuentas con balance 0 (balance = 0)
+
+                                            33
+34                                                A.2. Almacenamiento de datos en archivos
+
+
+          b) Cuentas con balance de crédito (balance <0)
+          c) Cuentas con balance de débito (balance >0)
+          d ) Reporte general
+          e) Salir
+
+         Ejemplos
+
+     1   struct cuenta{
+     2      int cuenta;
+     3      char nombre[30];
+     4      float balance;
+     5   }reg;
+
+         Reporte de cuentas con balance 0
+
+ No. cuenta Nombre Balance
+ xxx1       -      0
+ xxx2       -      0
+ .
+ xxxn       -      0
+
+         Total cuentas: n
+
+         Reporte de cuentas con balance de crédito
+
+ No. cuenta Nombre Balance
+ yyy1       -      -$
+ yyy2       -      -$
+ .
+ yyym       -      -$
+
+         Total cuentas: m
+         Balance total en créditos: y
+
+         Reporte de cuentas con balance de debito
+
+ No. cuenta Nombre Balance
+ zzz1       -      $
+ zzz2       -      $
+ .
+ zzzt       -      $
+
+         Total cuentas: t
+         Balance total en créditos: z
+A. Ejercicios                                                                              35
+
+
+     Reporte general
+
+ No. cuenta     Nombre Balance
+ xxx1           -      0
+ xxx2           -      0
+ .
+ xxxn           -        0
+ yyy1           -        -$
+ yyy2           -        -$
+ .
+ yyym           -        -$
+ zzz1           -        $
+ zzz2           -        $
+ .
+ zzzt           -        $
+
+     Total cuentas con balance 0: n
+     Total cuentas con balance de crédito: m
+     Total cuentas con balance de débito: t
+
+     Balance total en créditos: y
+     Balance total en débito: z
+
+
+A.3.      Operaciones con archivos
+  1. Escriba un programa que utilice archivos, estructuras y funciones para para almacenar
+     los datos de los huracanes que afectaron el territorio mexicano en los últimos 50 años.
+
+     El programa debe contar con 5 estructuras almacenadas en un archivo de nombre
+     categorias.bin que contienen un catálogo de categorı́as de clasificación de huracanes
+     con los siguientes datos
+
+           Categorı́a (1 a 5)
+           Velocidad del viento (km/h)
+           Marea (m)
+           Presión central (hPa)
+           Daños (Descripción de daños promedio)
+
+     El programa debe mostrar el siguiente menú inicial y realizar las acciones correspon-
+     dientes.
+
+       a) Ingresar huracán
+       b) Modificar
+       c) Eliminar
+36                                                              A.3. Operaciones con archivos
+
+
+      d ) Reportes
+      e) Salir
+
+     Al elegir la opción 1. Ingresar, el usuario introduce los siguientes datos de los huracanes
+     y regresará al menú inicial.
+
+          Nombre
+          Categorı́a
+          Fecha de clasificación
+          Tamaño (radio en grados latitud o km)
+          Origen (coordenadas geográficas)
+          Velocidad máxima
+
+     Al elegir la opción 2. Modificar, el usuario ingresará un nombre de huracán y los datos
+     que serán actualizados.
+
+     Al elegir la opción 3. Eliminar, el usuario ingresará el nombre del huracán que será
+     eliminado.
+
+     Al elegir la opción 4.Reportes, el programa debe pedir un intervalo de fechas para
+     evaluar los huracanes del periodo y mostrar la siguiente información
+
+ Nombre Categorı́a Fecha Tamaño           Origen Velocidad
+   h1
+   h2
+    .
+   hn
+
+     Total de huracanes en el periodo
+     Número de huracanes por categorı́a
+     Tamaño promedio
+     Velocidad promedio
+

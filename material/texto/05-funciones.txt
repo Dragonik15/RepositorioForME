@@ -1,0 +1,1010 @@
+                         Universidad Autónoma del
+                             Estado de Hidalgo
+
+
+
+
+            Instituto de Ciencias Básicas e Ingenierı́a
+
+
+          Licenciatura en Fı́sica y tecnologı́a avanzada
+
+
+
+                 Programación Estructurada
+                      en Entorno Unix
+
+
+
+                             5. Funciones
+
+
+                          Karla I. López De La Cruz
+                    mailto: lopezdelacruz.ki@gmail.com
+
+
+
+
+Este documento contiene las notas de la unidad 4 para el curso de Programación
+Estructurada. La unidad tiene como objetivo Estructurar soluciones a problemas
+               modelando y codificando funciones en lenguaje C.
+
+
+
+
+                             Septiembre de 2026
+Índice general
+
+5. Funciones                                                                                    1
+   5.1. Concepto de función . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .      1
+        5.1.1. Modularidad y estructuración . . . . . . . . . . . . . . . . . . . . . .        6
+   5.2. Alcance de variables . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .      6
+        5.2.1. Variables globales, locales, externas . . . . . . . . . . . . . . . . . . .      8
+   5.3. Paso de parámetros . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .    10
+        5.3.1. Por valor . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .   11
+        5.3.2. Por referencia . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .    11
+   5.4. Recursividad . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .     12
+   5.5. Funciones matemáticas de biblioteca . . . . . . . . . . . . . . . . . . . . . .       16
+
+A. Ejercicios                                                                                  21
+   A.1. Funciones . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .    21
+   A.2. Recursividad . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .     22
+   A.3. Funciones matemáticas de biblioteca . . . . . . . . . . . . . . . . . . . . . .       22
+
+
+
+
+                                                I
+II   ÍNDICE GENERAL
+5
+
+Funciones
+
+5.1.       Concepto de función
+   En C los programas se escriben combinando nuevas funciones que el programador escri-
+be con las funciones disponibles en la biblioteca estándar de C. La biblioteca estándar de
+C contiene funciones para llevar a cabo cálculos matemáticos comunes, manipulaciones de
+cadenas, de caracteres, entrada/salida y muchas operaciones útiles. Además el programador
+puede escribir funciones para definir tareas especı́ficas que pueden ser utilizadas en muchos
+puntos de un programa. Estas funciones son llamadas funciones definidas por el programa-
+dor. Los enunciados que definen una función se escriben sólo una vez, quedando ocultos de
+otras funciones.
+
+Las funciones se invocan mediante una llamada de función. La llamada de función espe-
+cifica el nombre de la misma y proporciona la información, en forma de argumentos, que la
+función llamada necesita para llevar a cabo su tarea designada.
+
+Una función entonces, es una colección independiente de declaraciones y sentencias gene-
+ralmente enfocadas a realizar una tarea especı́fica. Todo programa en C consta de al menos
+una función, la función main( ). Además de esta puede haber otras funciones cuya finalidad
+es fundamentalmente descomponer el problema general en subproblemas más fáciles de re-
+solver y de mantener. La ejecución de un programa comienza por la función main( ).
+
+Cuando se llama una función, el control se pasa a la misma para su ejecución; y cuan-
+do finaliza, el control es devuelto de nuevo al módulo que la llamó para continuar con la
+ejecución del mismo a partir de la sentencia que efectuó la llamada.
+
+int main ( )
+{
+func1( );
+.
+.
+func1( );
+
+func1( )
+
+                                             1
+2                                                                      5.1. Concepto de función
+
+
+{
+func2( );
+.
+}
+
+func2( )
+{
+.
+.
+}
+
+
+   La definición de una función consta de la cabecera de la función y el cuerpo de la función.
+La sintaxis es la siguiente:
+
+clase tipo nombre (parámetros formales)
+{
+declaraciones
+sentencias;
+}
+
+   Donde:
+   Clase define el ámbito de la función, esto es, desde donde puede ser llamada. La clase
+puede ser static o extern. Una función static es visible solamente en el archivo fuente en el
+cual está definida y una función extern es visible para todos los archivos fuente que compo-
+nen el programa. La clase de la función es extern por defecto.
+
+Tipo indica el tipo de valor devuelto por la función. Puede ser cualquier tipo fundamental
+o un tipo definido por el usuario. Por defecto es el tipo int. Una función no retorna arreglos
+o funciones, pero si retorna punteros a arreglos o a funciones. El tipo de regreso void indica
+que una función no devolverá un valor.
+
+Nombre es un identificador que indica el nombre de la función. Si el nombre va prece-
+dido por un operador asterisco (*), el valor devuelto por la función es un puntero.
+
+Parámetros formales componen la lista de argumentos de la función. Esta lista consta
+de un conjunto de variables con sus tipos, separadas por comas y encerradas entre parénte-
+sis. Los parámetros formales son variables que reciben los valores pasados en la llamada a
+la función. Si una función no recibe ningún parámetro, la lista de parámetros es void. Para
+cada parámetro debe ser listado de forma explı́cita un tipo, a menos que el parámetro sea
+de tipo int. Si un tipo no es listado, se supondrá como int.
+
+Las declaraciones junto con las sentencias dentro de las llaves forman el cuerpo de la función.
+El cuerpo de la función también se conoce como un bloque. Un bloque es un enunciado com-
+puesto que incluye declaraciones. Las variables pueden ser declaradas en cualquier bloque y
+los bloques pueden ser anidados. Una función no puede ser definida en el interior de otra
+función.
+     5. Funciones                                                                                   3
+
+
+
+     Existen tres formas de regresar el control al punto desde el cual se invocó una función.
+     Si la función no regresa un resultado, el control sólo se devuelve cuando se llega a la llave
+     derecha que termina la función o al ejecutar el enunciado
+
+1    return;
+
+        Si la función regresa un resultado, el enunciado
+
+1    return expresion;
+
+        Devuelve el valor de expresión al llamador.
+
+     Por ejemplo, observe los siguientes programas
+
+1    #include <stdio.h>
+2    int square(int);
+3
+
+4    int main(){
+5       int i, aux;
+6       for (i=0;i<=10;i++){
+7          aux=square(i);
+8          printf("%d ",aux);
+9       }
+10      return 0;
+11   }
+12
+
+13   int square(int y){
+14      return y*y;
+15   }
+
+        El programa utiliza una función square para calcular los cuadrados de los números de 0
+     a 10. La función square es invocada o llamada en main() dentro del enunciado printf()
+
+1    printf("%d     " ,square(i));
+
+         La función square recibe una copia del valor de i en el parámetro y. a continuación square
+     calcula y*y. el resultado se regresa a la función printf en main donde se llamó a square y
+     printf despliega el resultado. Este proceso se repite diez veces utilizando la estructura for.
+
+     La definición de square muestra que square espera un parámetro entero y. la palabra re-
+     servada int, que precede al nombre de la función, indica que square devuelve un resultado
+     entero. El enunciado return en square pasa el resultado del cálculo de regreso a la función
+     que llamó a square.
+
+     La lı́nea
+
+1    int square(int);
+     4                                                                    5.1. Concepto de función
+
+
+         Es un prototipo de función. El int dentro del paréntesis informa al compilador que square
+     espera recibir del llamador un valor entero. El int a la izquierda del nombre de la función
+     square, le informa al compilador que square regresa al llamador un resultado entero. El com-
+     pilador hace referencia al prototipo de la función para verificar que las llamadas a square
+     contengan el tipo de regreso correcto, el número correcto de argumentos, el tipo correcto de
+     argumentos y que los argumentos están en el orden correcto.
+
+     Si la función square, que utiliza un parámetro entero, es llamada con un argumento float, el
+     argumento se convertirá a int y square y square normalmente regresará un valor incorrecto.
+
+ 1   #include <stdio.h>
+ 2   int maximo(int, int, int);
+ 3
+
+ 4   int main(){
+ 5      int a,b,c,maxi;
+ 6      printf("\nIngrese tres enteros:\n");
+ 7      scanf("%d %d %d",&a,&b,&c);
+ 8      maxi=maximo(a,b,c);
+ 9      printf("\nEl máximo es: %d",maxi);
+10      return 0;
+11   }
+12
+
+13   int maximo(int x,int y,int z){
+14      int max=x;
+15      if (y>max)
+16         max=y;
+17      if(z>max)
+18         max=z;
+19      return max;
+20   }
+
+         El programa utiliza una función maximo definida por el programador para determinar y
+     regresar el mayor de tres enteros. Los tres enteros son ingresados mediante scanf(). A conti-
+     nuación los enteros son pasados a maximo, que determina cuál es el más grande. Este valor
+     es regresado a main mediante la sentencia return existente en maximo. El valor regresado es
+     asignado a la variable maxi, que entonces se imprime con el enunciado printf.
+
+     El prototipo de función es
+
+ 1   int maximo(int, int, int);
+
+          Este prototipo de función indica que maximo toma tres argumentos de tipo int y regresa
+     un resultado de tipo int. El prototipo de función es el mismo que la primera lı́nea de defini-
+     ción de función de maximo, a excepción de los nombres de los parámetros x, y y z, que no
+     se incluyen.
+
+     Una llamada de función que no coincida con el prototipo de función causará un error de
+    5. Funciones                                                                                    5
+
+
+    sintaxis. Un error se genera si el prototipo de la función y la definición no están de acuerdo.
+    Por ejemplo, observe el siguiente prototipo de función
+
+1   void maximo(int, int, int);
+
+        El compilador hubiera generado un error, porque el tipo de regreso void en el prototipo
+    de la función, es diferente al tipo de regreso int en el encabezado de la función.
+
+    Un prototipo de función le indica al compilador el tipo de dato regresado por la función, el
+    número de parámetros que la función espera recibir, los tipos de dichos parámetros y el orden
+    en el cual se esperan dichos parámetros. El compilador utiliza los prototipos de funciones
+    para verificar las llamadas de función.
+
+    Otra caracterı́stica importante de los prototipos de función es la coerción de argumentos,
+    es decir, obliga a los argumentos al tipo apropiado. Por ejemplo, la función matemática de
+    biblioteca sqrt puede ser llamada con un argumento entero como en la siguiente instrucción,
+    aun cuando el prototipo de función en math.h especifica un argumento double
+
+1   printf("%.3f\n",sqrt(4));
+
+        la función operará de forma correcta, valúa sqrt(4) e imprime el valor de 2.000. el proto-
+    tipo de función hace que el compilador convierta el valor entero 4 al valor double 4.0 antes
+    que el valor sea pasado a sqrt.
+
+    En general, los valores de los argumentos que no correspondan precisamente a los tipos
+    de parámetros del prototipo de la función serán convertidos al tipo apropiado, antes que la
+    función sea llamada. Estas conversiones pueden llevar a resultados incorrectos si se siguen
+    las reglas de promoción de C. las reglas de promoción definen cómo deben ser convertidos
+    los tipos a otros tipos sin perder datos. En el ejemplo, un int es convertido automáticamente
+    a double, sin cambiar su valor. Sin embargo, un double convertido a int trunca la parte frac-
+    cionaria del valor double. Las reglas de promoción se aplican automáticamente a expresiones
+    que contengan valores de dos o más tipos de datos. El tipo de cada valor en una expresión de
+    tipo mixto es automáticamente promovido al tipo más alto en la expresión. Los tipos de da-
+    tos en orden, con especificaciones de conversión para printf y scanf se muestran en la tabla 5.1.
+
+    La conversión de valores a tipos inferiores resulta en un valor incorrecto, por lo tanto, un
+    valor puede ser convertido sólo a un valor inferior, asignando de manera explı́cita el valor a
+    una variable de tipo menor inferior, o mediante el uso de un operador cast.
+
+    Los valores de los argumentos de las funciones son convertidos a los tipos de parámetro
+    en un prototipo de función como si hubieran sido asignados directamente a las variables de
+    esos tipos.
+
+    Si el prototipo de una función no se incluye en el programa, el compilador forma su propio
+    prototipo de función utilizando la primera ocurrencia de la función, ya sea la definición de
+    función o una llamada a dicha función. Por omisión, el compilador asumirá que la función
+    regresa un int, y no se supone nada en relación con los argumentos. Por lo tanto, si los
+    6                                                                       5.2. Alcance de variables
+
+
+    argumentos pasados a la función no son correctos, los errores no serán detectados por el
+    compilador.
+
+                                         Especificación de      Especificación de
+                    Tipo de dato
+                                         conversión printf      conversión scanf
+                    long double          %Lf                     %Lf
+                    double               %f                      %lf
+                    float                %f                      %f
+                    unsigned long int    %lu                     %lu
+                    long int             %ld                     %ld
+                    unsigned int         %u                      %u
+                    int                  %d                      %d
+                    short                %hd                     %hd
+                    char                 %c                      %c
+
+                        Cuadro 5.1: Jerarquı́a de promoción para tipos de datos
+
+
+
+
+    5.1.1.     Modularidad y estructuración
+        Las funciones permiten al programador modularizar el programa. Todas las variables de-
+    claradas en las definiciones de función son variables locales y son conocidas sólo en la función
+    en la cual están definidas. La mayor parte de las funciones tienen una lista de parámetros.
+    Los parámetros proporcionan la forma de comunicar información entre funciones. Los pará-
+    metros de una función también son variables locales.
+
+    Algunas ventajas de la creación de funciones son: el enfoque divide y vencerás hace el desa-
+    rrollo de programas más manipulable, la reutilización de software y se evita la repetición
+    de código. Con una adecuada identificación y definición de funciones, los programas pueden
+    ser creados a partir de funciones estandarizadas que ejecutan tareas especı́ficas en lugar de
+    elaborarlos con código personalizado. Esta técnica se conoce como abstracción. Empaque-
+    tar código en forma de función también permite que se ejecute dicho código desde distintas
+    posiciones en un programa, simplemente llamando la función.
+
+
+    5.2.      Alcance de variables
+        El alcance de una variable es la porción del programa en el cual dicha variable puede ser
+    referenciada. Por ejemplo, cuando en una función declaramos una variable local, puede ser
+    referenciada sólo en dicho bloque o en los bloques anidados dentro de dicho bloque.
+
+    Observe el siguiente programa
+
+1   #include <stdio.h>
+2   void a(void);
+3   void b(void);
+     5. Funciones                                                                                7
+
+
+4    void c(void);
+5    int x=1;
+6
+
+7    int main(){
+8       int x=5;
+9
+
+10       printf("\n\nX local en main: %d",x);
+11       {
+12          int x=7;
+13          printf("\nX local anidada en main: %d",x);
+14       }
+15       printf("\nX local en main: %d",x);
+16       a();
+17       b();
+18       c();
+19       a();
+20       b();
+21       c();
+22       printf("\n\nX local en main: %d",x);
+23       return 0;
+24   }
+25
+
+26   void a(void){
+27      int x=25;
+28      printf("\n\nX local en A al entrar: %d",x);
+29      x++;
+30      printf("\nX local en A antes de salir: %d",x);
+31   }
+32
+
+33   void b(void){
+34      static int x=50;
+35      printf("\n\nX estática local en B al entrar: %d",x);
+36      x++;
+37      printf("\nX estática local en B antes de salir: %d",x);
+38   }
+39
+
+40   void c(void){
+41      printf("\n\nX global en C al entrar: %d",x);
+42      x*=10;
+43      printf("\nX global en C antes de salir: %d",x);
+44   }
+
+         El programa demuestra el alcance de variables globales, variables locales automáticas y
+     variables locales static. Una variable global x es declarada e inicializada a 1. esta variable
+     global se oculta en cualquier bloque o función en el cual una variable de nombre x está de-
+     clarada. En main, una variable local es declarada e inicializada a 5. Esta variable es impresa
+     8                                                                      5.2. Alcance de variables
+
+
+     a continuación para mostrar que la x global está oculta en main. A continuación se define
+     un nuevo bloque en main, utilizando otra variable local x inicializada a 7. Esta variable se
+     imprime para mostrar que oculta a x en el bloque externo de main. La variable x con valor
+     7 de forma automática queda destruida al salir del bloque, y la variable local x del bloque
+     externo de main se vuelve a imprimir para mostrar que ya no está oculta.
+
+     El programa define tres funciones que no toman argumentos ni regresan nada. La función
+     a define una variable automática x y la inicializa a 25. Cuando se llama a a la variable se
+     imprime, se incrementa y se vuelve a imprimir antes de salir de la función. Cada vez que se
+     llama a esta función, la variable automática x es reinicializada a 25. La función b declara
+     una variable static de nombre x y la inicializa a 50. Las variables locales declaradas como
+     static conservan sus valores aun si están fuera de alcance. Cuando se llama a b, x se imprime,
+     se incrementa y se vuelve a imprimir antes de salir de la función. En la siguiente llamada a
+     esta función, la variable local static x contendrá el valor 51. La función c no declara ninguna
+     variable. Por lo tanto, cuando se refiere a la variable x, se utiliza la x global. Cuado c es
+     llamada, la variable global x se imprime, se multiplica por 10 y se vuelve a imprimir antes
+     de salir de la función. En la siguiente llamada a la función c, la variable global aun tiene
+     su valor modificado 10. Por último, el programa imprime la variable local x de main, para
+     mostrar que ninguna de las llamadas de función modificó el valor de x, porque las funciones
+     se referı́an a variables es otros alcances.
+
+
+     5.2.1.     Variables globales, locales, externas
+         Variables globales. Las variables globales se conocen a lo largo de todo el programa y
+     se pueden usar en cualquier parte del código. Además mantienen su valor durante toda la
+     ejecución del programa. Las variables globales se crean al declararlas en cualquier parte fuera
+     de una función. Pueden ser referenciadas por cualquier expresión independientemente de la
+     función en la que esta expresión se encuentre. Por ejemplo, observe el siguiente programa:
+
+ 1   #include <stdio.h>
+ 2   void func1(void), func2 (void);
+ 3   int cuenta;
+ 4
+
+ 5   int main(){
+ 6      cuenta = 100;
+ 7      func1();
+ 8      return 0;
+ 9   }
+10
+
+11   void func1(void){
+12      int temp;
+13      temp = cuenta;
+14      func2();
+15      printf ("Cuenta es: %d ",cuenta);
+16   }
+17
+     5. Funciones                                                                                     9
+
+
+18   void func2(void){
+19      int cuenta;
+20      for (cuenta=1;cuenta<10;cuenta++)
+21         printf (".");
+22   }
+
+         La variable cuenta ha sido declarada fuera de todas las funciones. Aunque su declaración
+     aparece antes de la función main(), se podrı́a haber declarado en cualquier lugar anterior
+     a su primer uso, mientras no sea en una función, sin embargo es mejor declarar todas las
+     variables globales al principio del programa.
+
+     Las funciones main() y func1() pueden usar la variable cuenta aunque no haya sido de-
+     clarada dentro de ellas.
+
+     La función func2() declara una variable local llamada cuenta y cuando func2 hace refe-
+     rencia a cuenta, sólo hace referencia a su variable local, no a la global.
+
+     Si una variable global y una local tienen el mismo nombre, todas las referencias a ese nombre
+     de variable dentro de la función donde se ha declarado la variable local se refieren a esa
+     variable local y no tienen efecto sobre la variable global.
+
+     Las variables globales son útiles cuando se usan los mismos datos en varias funciones del
+     programa, sin embrago se debe evitar el uso de variables globales innecesarias. Por ejemplo,
+     observe las dos funciones siguientes:
+
+        General                                         Especı́fica
+
+                                                    1   int x,y;
+1    int prod (int x, int y){                       2   int prod (void){
+2       return (x*y);                               3      return (x*y);
+3       }                                           4      }
+
+         Ambas funciones devuelven el producto de las variables x y y. La versión generalizada o
+     parametrizada se puede usar para devolver el producto de dos enteros cualesquiera, mientras
+     que la versión especı́fica sólo se puede usar para devolver el producto de las variables globales
+     x y y.
+         Variables locales. Las variables que se declaran dentro de una función se denominan
+     variables locales. Las variables locales pueden ser referenciadas sólo por sentencias que estén
+     dentro del bloque en el que han sido declaradas, es decir, las variables locales no son conocidas
+     fuera de su propio bloque de código y sólo existen mientras se está ejecutando el bloque de
+     código en el que fueron declaradas, se crean al entrar al bloque y se destruyen al salir de el.
+     Por ejemplo, observe las dos funciones siguientes:
+
+1    void func1 (void){                             1   void func2 (void){
+2       int x;                                      2      int x;
+3       x = 10;                                     3      x = -99;
+4       }                                           4      }
+    10                                                                       5.3. Paso de parámetros
+
+
+       La variable entera x se declara dos veces, una en func1() y otra en func2(). La x de func1()
+    no corresponde ni tiene relación con la x de func2(). Cada x sólo es conocida en el código en
+    que ha sido declarada.
+
+    Dado que las variables locales se crean y se destruyen cada vez que se entra y se sale de
+    un bloque de código en el que se han declarado, no pueden retener sus valores entre llamadas.
+
+    Variables externas. Las palabras reservadas extern y static se utilizan para declarar iden-
+    tificadores de variables y de funciones de persistencia estática. Los identificadores de persis-
+    tencia estática existen a partir del momento en que el programa inicia su ejecución. Se asigna
+    y se inicializa almacenamiento para las variables desde el momento en que empieza a operar
+    el programa. Para las funciones, existe el nombre de la función al iniciarse la ejecución del
+    programa. Sin embargo, aunque las variables y los nombres de función existen a partir del
+    inicio de la ejecución del programa, esto no significa que estos identificadores pudieran ser
+    utilizados a lo largo de todo el programa.
+
+    Existen dos tipos de identificadores con persistencia estática: los identificadores externos
+    (variables globales y nombres de función) y las variables locales declaradas con el especifica-
+    dor de clase de almacenamiento static. Las variables globales y los nombres de función son
+    por omisión de la clase de almacenamiento extern. Las variables globales se crean colocan-
+    do declaraciones de variables por fuera de cualquier definición de función, y conservan sus
+    valores a todo lo largo de la ejecución del programa. Las variables globales y las funciones
+    pueden ser referenciadas por cualquier función posterior a su declaración o definición dentro
+    del archivo. Esta es una razón para la utilización de prototipos de función. Cuando inclui-
+    mos stdio.h en un programa que hace llamadas a printf, el prototipo de función se coloca
+    al principio del archivo para hacer que el nombre printf sea conocido para el resto del archivo.
+
+    Las variables locales declaradas con la palabra static son conocidas sólo en la función para la
+    cual son definidas, pero a diferencia de las variables automáticas, las variables locales static
+    conservan su valor cuando sale de la función. La próxima vez que se llama a esa función, la
+    variable local static contiene el valor que tenı́a cuando la función salió por última vez
+
+
+    5.3.      Paso de parámetros
+        Si una función va a usar argumentos, debe declarar variables que acepten los valores de
+    los argumentos. Estas variables se llaman parámetros formales de la función. Se comportan
+    como otras variables locales dentro de la función, se crean al entrar a la función y se destruyen
+    al salir. Por ejemplo, observe la siguiente función
+
+1   esta(char *cad,char c){
+2      while(*cad){
+3         if(*cad==c)
+4            return 1;
+5         else
+6            cad++;
+7      }
+     5. Funciones                                                                                   11
+
+
+8        return 0;
+9    }
+
+        La función tiene dos parámetros: cad y c. esta función devuelve 1 si el caracter c forma
+     parte de la cadena cad, en otro caso, devuelve 0.
+
+     Al igual que con las variables locales, se pueden hacer asignaciones a los parámetros forma-
+     les de una función o usarlos en cualquier expresión válida en C. aun cuando estas variables
+     realizan la tarea especı́fica de recibir el valor de los argumentos que se pasan a la función, se
+     pueden usar como cualquier otra variable.
+
+     5.3.1.     Por valor
+         Cuando los argumentos se pasan en llamada por valor, se efectúa una copia del valor del
+     argumento y esta se pasa a la función llamada. Las modificaciones a la copia no afectan el
+     valor original de la variable del llamador.
+
+     La llamada por valor deberı́a ser utilizada siempre que la función llamada no necesite modifi-
+     car el valor de la variable original del llamador. Esto evita efectos accidentales. Por ejemplo,
+     observe el siguiente programa
+
+1    #include <stdio.h>
+2    int cuad(int x);
+3
+
+4    int main(){
+5       int n=10;
+6       printf("El cuadrado de %d es %d",n,cuad(n));
+7       return 0;
+8    }
+9
+
+10   int cuad(int x){
+11      x=x*x;
+12      return x;
+13   }
+
+         En el programa, se copia el valor del argumento de cuad(), 10 3n el parámetro x. cuando
+     se realiza la asignación x=x*x, el único elemento que se modifica es la variable local x. la
+     variable t usada para llamar a cuad(), todavı́a tiene el valor de 10. De esta forma la salida es
+     100. Lo que se pasa a la función es una copia del valor del argumento. Lo que ocurra dentro
+     de la función no tiene efecto sobre la variable utilizada en la llamada.
+
+     5.3.2.     Por referencia
+         Cuando un argumento es pasado en llamada por referencia, el llamador permite que la
+     función llamada modifique el valor original de la variable. La llamada por referencia debe ser
+     utilizada sólo en funciones llamadas confiables, que necesitan modificar la variable original.
+     12                                                                           5.4. Recursividad
+
+
+     Es posible simular la llamada por referencia mediante la utilización de operadores de di-
+     rección y de indirección. Cuando se hace una llamada por referencia pasando un puntero al
+     argumento, se pasa la dirección del argumento a la función, de este modo es posible cambiar
+     el valor del argumento exterior de la función. Los punteros se pasan a las funciones como
+     cualquier otro valor. Es necesario declarar los parámetros como tipo puntero. Por ejemplo,
+     observe el siguiente programa
+
+ 1   #include <stdio.h>
+ 2   void inter(int *x, int *y);
+ 3
+
+ 4   int main(){
+ 5      int x=10,y=20;
+ 6      printf("\nAntes de inter\n");
+ 7      printf("X = %d\nY = %d",x,y);
+ 8      inter(&x,&y);
+ 9      printf("\n\nDespués de inter\n");
+10      printf("X = %d\nY = %d",x,y);
+11      return 0;
+12   }
+13
+
+14   void inter(int *x, int *y){
+15      int aux;
+16      aux=*x;
+17      *x=*y;
+18      *y=aux;
+19   }
+
+         La función inter() intercambia el valor de sus dos argumentos enteros. El operador *
+     accede a la variable apuntada por su operador. De esta forma se intercambian los contenidos
+     de las variables usadas en la llamada a la función. Inter() debe ser llamada con la dirección
+     de los argumentos. A la variable x se le asigna el valor de 10 y a y se le asigna el valor de
+     20. Después se llama a inter() con las direcciones de x y de y. se utiliza el operador unario
+     & para obtener la dirección de las variables. De esta manera, las direcciones de x y de y, no
+     sus valores, son las que pasan a la función inter().
+
+
+     5.4.      Recursividad
+         Una función recursiva es una función que se llama a sı́ misma, ya sea directa o indirecta,
+     a través de otra función.
+
+     Una función recursiva es llamada para resolver un problema. La función sabe sólo cómo
+     resolver el caso más simple o caso base. Si la función es llamada con caso base, la función
+     simplemente regresa un resultado. Si la función es llamada con un caso más complejo, la
+     función divide el problema en dos partes conceptuales: una parte que la función ya sabe
+     cómo ejecutar y una parte que la función no sabe cómo ejecutar. Para hacer factible la re-
+     cursión, esta última parte debe parecerse al problema original, pero resulta ligeramente más
+    5. Funciones                                                                                 13
+
+
+    simple o una versión ligeramente más pequeña del problema original. Dado que este nuevo
+    problema aparenta o se ve similar al problema original, la función llama a una copia nueva
+    de sı́ misma, para que empiece a trabajar sobre el problema más pequeño y esto se conoce
+    como una llamada recursiva o paso de recursión. El paso de recursión también incluye la
+    palabra reservada return porque su resultado será combinado con la otra parte del problema
+    que la función sabe cómo resolver para formar un resultado que será regresado al llamador
+    original, posiblemente main().
+
+    El paso de recursión se ejecuta en tanto la llamada original a la función esté abierta, es
+    decir, que no se haya terminado su ejecución. El paso de recursión puede dar como resultado
+    muchas más llamadas recursivas, conforme la función vaya dividiendo cada problema sobre el
+    cual es llamada en dos partes conceptuales. Para que la recursión finalice de forma eventual,
+    cada vez que la función se llama a sı́ misma sobre una versión ligeramente más sencilla del
+    problema original, la secuencia de problemas cada vez más pequeños, deben converger en el
+    caso base. En este punto la función reconocerá el caso base, regresa un resultado a la copia
+    anterior de la función y sigue con una secuencia de regresos a todo lo largo de la lı́nea hasta
+    llegar a la llamada original de la función, devolviendo el resultado final a main().
+
+    Por ejemplo, el cálculo del factorial de un número entero no negativo n. escrito n!, es el
+    producto
+
+                                     n ∗ (n − 1) ∗ (n − 2) ∗ ... ∗ 1
+       con 1! = 1y0! definido como 1.
+
+    El factorial de un entero num, mayor o igual a 0 puede ser calculado en forma iterativa
+    utilizando la siguiente estructura for
+
+1   int i,fac=1;
+2      for(i=num;i>=1;i--){
+3         fac*=i;
+4      }
+
+       Una definición recursiva de la función factorial se consigue al observar la relación
+
+                                           n! = n ∗ (n − 1)!
+       Por ejemplo, 5! Es lo mismo que 5 ∗ 4!
+
+                                       5! = 5 ∗ 4 ∗ 3 ∗ 2 ∗ 1 = 120
+                                     5! = 5 ∗ (4 ∗ 3 ∗ 2 ∗ 1) = 120
+                                                       5! = 5 ∗ (4!)
+       La evaluación de 5! Se hace como se muestra en la figura 5.1. La figura muestra cómo la
+    sucesión de llamadas recursivas continúa hasta que 1! se evalúa al valor 1, lo que termina la
+    recursión. También muestra los valores regresados por cada llamada recursiva a su llamador,
+    hasta que el valor final es calculado y regresado.
+       Observe el siguiente programa
+     14                                                               5.4. Recursividad
+
+
+
+
+                            Figura 5.1: evaluación recursiva de 5!
+
+
+
+ 1   #include <stdio.h>
+ 2   long fact(long);
+ 3
+
+ 4   int main(){
+ 5      int i;
+ 6      for(i=1;i<=10;i++){
+ 7         printf("%2d! = %ld\n",i,fact(i));
+ 8      }
+ 9      return 0;
+10   }
+11
+
+12   long fact(long n){
+13      if (n<=1){
+14         return 1;
+15      }
+     5. Funciones                                                                                 15
+
+
+16       else{
+17          return(n*fact(n-1));
+18       }
+19   }
+
+         El programa utiliza la recursión para calcular e imprimir los factoriales de los enteros 0
+     a 10. La función recursiva fact primero prueba para ver si una condición de terminación es
+     verdadera, es decir, si n es menor o igual a 1. Si n es menor o igual a 1, fact regresa 1, ya no
+     es necesaria la recursión y el programa termina. Si n es mayor que 1, la instrucción
+
+1    return(n*fact(n-1));
+
+         Expresa el problema como el producto de n y una llamada recursiva a fact evaluando el
+     factorial de n-1. El fact(n-1) es un problema ligeramente más simple que el fact(n).
+
+     La función fact ha sido declarada para recibir un parámetro de tipo long y regresar un
+     resultado de tipo long. Esto es una notación abreviada del tipo long int. Con este tipo de
+     dato, el programa puede calcular factoriales mayores que 7!
+
+     La serie Fibonacci
+
+     0, 1, 1, 2, 3, 5, 8, 13, 21...
+
+     Empieza con 0 y 1, y tiene la propiedad que cada número Fibonacci subsecuente, es la
+     suma de los dos números Fibonacci previos. La serie Fibonacci puede ser definida de forma
+     recursiva de a siguiente manera
+
+     fibonacci(0) = 0
+     fibonacci(1) = 1
+     fibonacci(n) = fibonacci(n-1) + fibonacci(n-2)
+
+     Observe el siguiente programa
+
+1    #include <stdio.h>
+2    long fib(long);
+3
+
+4    int main(){
+5       long n,r,i;
+6       printf("Ingrese un número: ");
+7       scanf("%ld",&n);
+8       for(i=0;i<=n;i++){
+9          r=fib(i);
+10         printf("\nFibonacci(%ld) = %ld\n",i,r);
+11      }
+12      return 0;
+13   }
+14
+     16                                                   5.5. Funciones matemáticas de biblioteca
+
+
+15   long fib (long x){
+16      if(x==0 || x==1){
+17         return x;
+18      }
+19      else{
+20         return fib(x-1)+fib(x-2);
+21      }
+22   }
+         El programa calcula los números Fibonacci del 1 al n en forma recursiva, utilizando la
+     función fib. La llamada de fib a partir de main no es una llamada recursiva, pero todas las
+     llamadas subsecuentes a fib, si son recursivas. Cada vez que se invoca a fib, prueba el caso
+     base, donde n es igual a 0 o a 1. Si esto es verdadero, regresa n. Si n es mayor que 1, el paso
+     de recursión genera dos llamadas recursivas, cada una de las cuales es para un problema
+     ligeramente más sencillo que la llamada original a fib. La figura 5.2 muestra cómo la función
+     fib evaluarı́a fib(3).
+
+
+
+
+                                  Figura 5.2: evaluación recursiva de 5!
+
+
+        Cada nivel de recursión en la función fib tiene un efecto duplicador sobre el número
+     de llamadas, es decir, el número de llamadas recursivas que se ejecutarán para calcular el
+     número Fibonnaci de orden n será del orden 2n .
+
+
+     5.5.      Funciones matemáticas de biblioteca
+        Las funciones matemáticas de biblioteca permiten al programador ejecutar cálculos ma-
+     temáticos comunes. Las funciones se utilizan normalmente en un programa escribiendo el
+    5. Funciones                                                                                  17
+
+
+    nombre de la función seguido por el argumento, o lista de argumentos separados por comas,
+    encerrados entre paréntesis. Por ejemplo, observe la siguiente instrucción.
+
+1   printf("%.2f",sqrt(900.0));
+
+        La instrucción calcula e imprime la raı́z cuadrada de 900. Cuando se ejecuta, es llamada
+    la función matemática d la biblioteca sqrt para calcular la raı́z cuadrada del número conte-
+    nido entre paréntesis (900.0). El número 900.0 es el argumento de la función sqrt. La función
+    sqrt toma un argumento de tipo double y regresa un resultado de tipo double.
+
+    La tabla 5.2 muestra algunas funciones matemáticas de la biblioteca de C. Las variables
+    x y y son de tipo double. Todas las funciones de la biblioteca de matemáticas devuelven el
+    tipo de datos double.
+
+     Función      Descripción                                             Ejemplo
+     sqrt(x)       Raı́z cuadrada de x                                      sqrt(900.0)=30.0
+     exp(x)        Función exponencial e x                                 exp(1.0)=2.718282
+     log(x)        Logaritmo natural de x (base e)                          log(2.718282)=1.0
+     log10(x)      Logaritmo de x (base 10)                                 log10(1.0)=0
+     fabs(x)       Valor absoluto de x                                      fabs(-9)=9.0
+     ceil(x)       Redondea a x al entero más pequeño no menor que x      ceil(9.2)=10.0
+     floor(x)      Redondea a x al entero más grande no mayor que x        floor(9.2)=9.0
+     pow(x,y)      x elevado a la potencia y                                pow(2,7)=128.0
+     fmod(x,y)     Residuo de x/y como un float                             fmod(13.657,2.333)=1.992
+     sin(x)        Seno trigonométrico de x (x en radianes)                sin(0)=0
+     cos(x)        Coseno trigonométrico de x (x en radianes)              cos(0)=1.0
+     tan(x)        Tangente trigonométrica de x (x en radianes)            tan(0)=0
+
+                           Cuadro 5.2: Funciones matemáticas de uso común
+
+
+        Los argumentos de las funciones pueden ser constantes, variables o expresiones. Por ejem-
+    plo, observe el siguiente fragmento de código
+
+1   double c1=13.0, d=3.0, f=4.0;
+2   printf("%.2f", sqrt(c1+d*f));
+
+       Llamada a funciones con arreglos
+
+    Cuando se usa un arreglo como argumento de una función sólo se pasa la dirección del
+    arreglo, no una copia del arreglo entero. Cuando se llama una función con un nombre de
+    arreglo, se pasa a la función un puntero al primer elemento del arreglo. Esto significa que la
+    declaración del parámetro debe ser de un tipo puntero compatible. Por ejemplo, observe el
+    siguiente programa.
+
+1   #include <stdio.h>
+2   void desp1(int num[10]);
+     18                                                 5.5. Funciones matemáticas de biblioteca
+
+
+ 3   void desp2(int num[]);
+ 4   void desp3(int *num);
+ 5   void despliega(int num[]);
+ 6
+
+ 7   int main(){
+ 8      int t[10],i;
+ 9      for(i=0;i<10;i++){
+10         t[i]=i;
+11      }
+12      desp1(t);
+13      desp2(t);
+14      desp3(t);
+15      return 0;
+16   }
+17
+
+18   void desp1(int num[10]){
+19      int i;
+20      printf("\n\nDesplegar 1");
+21      despliega(num);
+22   }
+23
+
+24   void desp2(int num[]){
+25      int i;
+26      printf("\n\nDesplegar 2");
+27      despliega(num);
+28   }
+29
+
+30   void desp3(int *num){
+31      int i;
+32      printf("\n\nDesplegar 3");
+33      despliega(num);
+34   }
+35
+
+36   void despliega(int num[]){
+37      int i;
+38      for(i=0;i<10;i++){
+39         printf("\n%d",num[i]);
+40      }
+41   }
+
+         Existen tres formas de declarar un parámetro que va a recibir un puntero a un arreglo.
+     Primero, se puede declarar como un arreglo. En la función desp1(), aunque el parámetro num
+     se declara como un arreglo de 10 elementos, el compilador lo convierte a un puntero a entero.
+     De esa manera sólo pasa un puntero a un arreglo, por lo que debe haber un parámetro de
+     tipo puntero para recibirlo.
+     5. Funciones                                                                                19
+
+
+     La segunda manera de declarar un parámetro de tipo arreglo es especificándolo como un
+     arreglo sin tamaño como en la función desp2(), donde num se declara como un arreglo de
+     enteros de tamaño desconocido. Este método de declaración define num como un puntero a
+     entero.
+
+     La tercera forma de declarar num es como un puntero, como se muestra en la función desp3(),
+     esto se permite porque cualquier puntero se puede indexar usando [ ] como si fuese un arreglo.
+
+     Los tres métodos de declaración de parámetro de arreglo producen un puntero. Cuando
+     se usa un arreglo como argumento de de una función, es su dirección lo que pasa a la fun-
+     ción. En este caso, el código que hay dentro de la función opera sobre el contenido real del
+     arreglo usado para llamar a la función, pudiendo alterarlo. Por ejemplo, observe el siguiente
+     programa
+
+1    #include <stdio.h>
+2    #include <ctype.h>
+3    void mayus(char *cad);
+4
+
+5    int main(){
+6       char c[80];
+7       printf("Ingrese una cadena: ");
+8       gets(c);
+9       mayus(c);
+10      printf("\nC: %s",c);
+11      return 0;
+12   }
+13
+
+14   void mayus(char *cad){
+15      int i;
+16      for(i=0;cad[i];++i){
+17         cad[i]=toupper(cad[i]);
+18      }
+19      printf("\nCAD: %s",cad);
+20   }
+
+         La función mayus() imprime su argumento de tipo cadena en mayúsculas. Después de la
+     llamada a mayus(), el contenido del arreglo c de main() cambia a mayúsculas.
+Apéndice A
+
+Ejercicios
+
+A.1.    Funciones
+ 1. Elabore un programa en lenguaje C que muestre un menú y ejecute las siguientes
+    conversiones entre sistemas numéricos utilizando funciones:
+        decabin() decimal a binario
+        dinadec() binario a decimal
+        decaoct() decimal a octal
+        octadec() octal a decimal
+        decahex() decimal a hexadecimal
+        hexadec() hexadecimal a decimal
+   Despliegue el bit más significativo a la izquierda.
+ 2. Elabore un programa en lenguaje C que muestre un menú y ejecute las siguientes
+    operaciones entre matrices utilizando funciones:
+        Suma de dos matrices
+        Producto de dos matrices
+        Suma de elementos de una matriz
+ 3. Elabore un programa en lenguaje C que muestre un menú y ejecute las siguientes
+    conversiones de temperatura utilizando funciones:
+        Grados Celsius a Farenheit
+        Grados Farenheit a Celsius
+        Grados Celsius a Kelvin
+        Grados Kelvin a Celsius
+ 4. Elabore un programa en lenguaje C que muestre un menú y ejecute las siguientes
+    conversiones de coordenadas utilizando funciones:
+        Coordenadas rectangulares a polares
+        Coordenadas polares a rectangulares
+
+                                            21
+22                                                                        A.2. Recursividad
+
+
+A.2.        Recursividad
+     1. Elabore un programa en lenguaje C que despliegue en pantalla el triángulo de pascal
+        hasta la fila n utilizando funciones recursivas. n es dado por el usuario.
+
+
+
+
+A.3.        Funciones matemáticas de biblioteca
+     1. Elabore un programa en lenguaje C que muestre un menú y ejecute los siguientes
+        cálculos para un ángulo dado en grados, mostrar la equivalencia en radianes.
+
+            Seno
+            Coseno
+            Tangente
+            Cotangente
+            Secante
+            Cosecante
+
